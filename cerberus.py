@@ -6,28 +6,11 @@ The Three-Headed Hellhound of Security
 
 import os
 import sys
-
-# Load environment variables from .env
-def load_env():
-    """Load environment variables from .env file"""
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
-    if os.path.exists(env_path):
-        with open(env_path, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#') and '=' in line:
-                    key, value = line.split('=', 1)
-                    os.environ[key.strip()] = value.strip()
-
-load_env()
-
 import requests
-from typing import Dict
-
-__version__ = "1.0.0"
+import re
 
 # ============================================================
-# FORMATTING HELPERS
+# COLORS & FORMATTING
 # ============================================================
 
 class Colors:
@@ -42,21 +25,17 @@ class Colors:
     CYAN = "\033[96m"
     WHITE = "\033[97m"
     GRAY = "\033[90m"
-    
-    # Background colors
     BG_RED = "\033[41m"
     BG_GREEN = "\033[42m"
     BG_BLUE = "\033[44m"
     BG_YELLOW = "\033[43m"
+
 
 def box_title(title: str, width: int = 60) -> str:
     """Create a boxed title"""
     padding = (width - len(title) - 2) // 2
     return f"\n{'═' * width}\n{' ' * padding}{title}\n{'═' * width}"
 
-def box_subtitle(title: str, width: int = 60) -> str:
-    """Create a boxed subtitle"""
-    return f"{'─' * width}\n  {title}\n{'─' * width}"
 
 def menu_option(num: str, text: str, description: str = "") -> str:
     """Format a menu option nicely"""
@@ -64,30 +43,20 @@ def menu_option(num: str, text: str, description: str = "") -> str:
         return f"  {Colors.CYAN}[{num}]{Colors.RESET} {text:<25} - {Colors.GRAY}{description}{Colors.RESET}"
     return f"  {Colors.CYAN}[{num}]{Colors.RESET} {text}"
 
+
 def status_indicator(available: bool) -> str:
     """Return colored status indicator"""
     if available:
         return f"{Colors.GREEN}✓{Colors.RESET}"
     return f"{Colors.RED}✗{Colors.RESET}"
 
+
 def separator(width: int = 60, char: str = "─") -> str:
     """Create a separator line"""
     return char * width
 
-def header(text: str, width: int = 60) -> str:
-    """Create a centered header"""
-    padding = (width - len(text)) // 2
-    return f"\n{' ' * padding}{Colors.BOLD}{text}{Colors.RESET}"
 
-def print_boxed(title: str, width: int = 60):
-    """Print a boxed title"""
-    print(box_title(title, width))
-
-def print_subtitle(title: str, width: int = 60):
-    """Print a subtitle with separator"""
-    print(box_subtitle(title, width))
-
-# Build menu options as a regular string (not f-string)
+# Build menu options as a regular string
 MENU_OPTIONS = """MAIN MENU - Cerberus Premium
 ════════════════════════════════════════════════════════════════════════════
   [1] OSINT MODULE          - Threat Intelligence & Research
