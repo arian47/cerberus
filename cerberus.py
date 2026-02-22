@@ -98,10 +98,15 @@ class GeminiConnector:
     def generate(self, prompt):
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={GOOGLE_API_KEY}"
         data = {"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"temperature": 0.7, "maxOutputTokens": 32000}}
-        resp = requests.post(url, json=data, timeout=60)
-        if resp.status_code != 200:
-            return {"success": False, "error": resp.text}
-        return {"success": True, "response": resp.json()['candidates'][0]['content']['parts'][0]['text']}
+        try:
+            resp = requests.post(url, json=data, timeout=60)
+            if resp.status_code == 403:
+                return {"success": False, "error": "API key blocked or invalid. Please check your GOOGLE_API_KEY"}
+            if resp.status_code != 200:
+                return {"success": False, "error": f"API error {resp.status_code}: {resp.text[:200]}"}
+            return {"success": True, "response": resp.json()['candidates'][0]['content']['parts'][0]['text']}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
 class OpenAIConnector:
     def __init__(self, model="gpt-4o"):
