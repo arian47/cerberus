@@ -5,6 +5,24 @@
 
 ---
 
+## [2026-02-22 23:20] - Add MiniMax Bypasses to CLI Menu
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Modified:** `cerberus.py` - Added 6 MiniMax-specific bypasses to ADVANCED_PAYLOADS
+* **Added:** New "MiniMax Bypasses" category in advanced attacks menu
+
+### 2. Rationale & Architecture
+* **Why:** Users need easy access to confirmed working bypass techniques
+* **New Menu Option:** Select [mm] in Advanced Attacks to see all MiniMax bypasses
+* Each bypass shows: name, description, example
+
+### 3. Recommendations & Next Steps
+* Add more model-specific bypasses as they're discovered
+* Consider adding automated testing
+
+---
+
 ## [2026-02-22 22:58] - Added New MiniMax Bypass Techniques
 **Task ID / PR Reference:** N/A
 
