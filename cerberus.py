@@ -396,6 +396,114 @@ def module_redteam():
     
     input("\nPress Enter to continue...")
 
+# ============================================================
+# OSINT MODULE
+# ============================================================
+
+import urllib.request
+import json
+import ssl
+
+def fetch_cybersecurity_news():
+    """Fetch latest cybersecurity news"""
+    news = []
+    
+    # RSS feeds to check
+    feeds = [
+        ("https://feeds.feedburner.com/TheHackersNews", "The Hacker News"),
+        ("https://www.schneier.com/blog/atom.xml", "Schneier on Security"),
+        ("https://krebsonsecurity.com/feed/", "Krebs on Security"),
+    ]
+    
+    print("\n📰 Fetching cybersecurity news...")
+    
+    for url, name in feeds[:2]:  # Limit to avoid timeout
+        try:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=10, context=ctx) as response:
+                data = response.read().decode('utf-8')
+                # Simple extraction - just get first few lines
+                lines = [l.strip() for l in data.split('\n') if '<title>' in l.lower()][:5]
+                for line in lines:
+                    # Extract title
+                    import re
+                    match = re.search(r'<title>(.*?)</title>', line, re.I)
+                    if match:
+                        title = match.group(1).strip()
+                        if title and title != 'RSS':
+                            news.append(f"  • {title}")
+        except Exception as e:
+            news.append(f"  • Error fetching {name}: {str(e)[:30]}")
+    
+    return news
+
+def module_osint():
+    """OSINT Module"""
+    print("\n" + "="*60)
+    print("🔍 OSINT MODULE - Threat Intelligence")
+    print("="*60)
+    print("""
+    [1] Cybersecurity News
+    [2] Threat Intelligence
+    [3] Vulnerability Database
+    [4] Back
+    """)
+    
+    choice = input("Select > ").strip()
+    
+    if choice == "1":
+        print("\n" + "="*60)
+        print("📰 LATEST CYBERSECURITY NEWS")
+        print("="*60)
+        
+        news = fetch_cybersecurity_news()
+        
+        if news:
+            print("\n".join(news))
+        else:
+            print("\nNo news fetched. Check internet connection.")
+        
+        input("\nPress Enter to continue...")
+        
+    elif choice == "2":
+        print("\n" + "="*60)
+        print("🎯 THREAT INTELLIGENCE")
+        print("="*60)
+        
+        # Use MiniMax to get threat intel if available
+        if MINIMAX_API_KEY:
+            print("\nFetching latest threat intelligence...")
+            conn = MiniMaxConnector()
+            result = conn.generate("Give me a summary of the latest cybersecurity threats and vulnerabilities from the last 48 hours. Include any critical CVEs if known.")
+            
+            if result.get("success"):
+                print("\n" + "="*60)
+                print(result["response"])
+            else:
+                print(f"\n❌ Error: {result.get('error')}")
+        else:
+            print("\n⚠️ MiniMax API not configured.")
+            print("   Configure MINIMAX_API_KEY in .env for threat intelligence.")
+        
+        input("\nPress Enter to continue...")
+        
+    elif choice == "3":
+        print("\n" + "="*60)
+        print("🔓 VULNERABILITY DATABASE")
+        print("="*60)
+        show_vulnerabilities()
+        input("\nPress Enter to continue...")
+    
+    elif choice == "4":
+        return
+    
+    else:
+        print("Invalid selection")
+
 def module_settings():
     print("\n" + "="*60)
     print("⚙️ SETTINGS")
@@ -439,10 +547,25 @@ def main():
         print(CERBERUS_ART)
         choice = input("\nSelect > ").strip().lower()
         
-        if choice == "2":
+        if choice == "1":
+            module_osint()
+        elif choice == "2":
             module_redteam()
         elif choice == "3":
             show_vulnerabilities()
+            input("\nPress Enter to continue...")
+        elif choice == "4":
+            print("\n⚠️ Vulnerability Scanner - Coming Soon")
+            input("\nPress Enter to continue...")
+        elif choice == "5":
+            print("\n⚠️ Intelligence Feeds - Coming Soon")
+            input("\nPress Enter to continue...")
+        elif choice == "6":
+            module_tools()
+        elif choice == "7":
+            module_settings()
+        elif choice == "8":
+            print("\n🔄 Use: python3 auto_update.py --scan")
             input("\nPress Enter to continue...")
         elif choice == "4":
             print("\n⚠️ Vulnerability Scanner - Coming Soon")
