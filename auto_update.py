@@ -12,7 +12,7 @@ import re
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 
-sys.path.insert(0, '/home/ubuntu/.openclaw/workspace/skills/redteam')
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'skills', 'redteam'))
 
 def get_cutoff_date(months: int = 6) -> int:
     """Get months ago as integer for comparison (YYYYMM)"""
@@ -80,10 +80,7 @@ def fetch_arxiv_papers(max_results: int = 10) -> List[Dict]:
         
         for query in queries[:2]:  # Limit to avoid rate limits
             encoded_query = urllib.parse.quote(query, safe='')
-            url = f"http://export.arxiv.org/api/query?search_query=all:{query}&max_results={max_results}&sortBy=submittedDate&sortOrder=descending"
-        
-        for query in queries[:2]:  # Limit to avoid rate limits
-            url = f"http://export.arxiv.org/api/query?search_query=all:{query}&max_results={max_results}&sortBy=submittedDate&sortOrder=descending"
+            url = f"http://export.arxiv.org/api/query?search_query=all:{encoded_query}&max_results={max_results}&sortBy=submittedDate&sortOrder=descending"
             
             try:
                 with urllib.request.urlopen(url, timeout=10) as response:
@@ -173,9 +170,21 @@ def update_payload_library(suggestions: List[Dict]) -> bool:
     if not suggestions:
         return True
     
-    payloads_file = '/home/ubuntu/.openclaw/workspace/skills/redteam/core/payloads_v6.py'
+    # Try multiple possible locations for payloads file
+    possible_paths = [
+        os.path.join(os.path.dirname(__file__), '..', 'skills', 'redteam', 'core', 'payloads_v6.py'),
+        os.path.join(os.path.dirname(__file__), 'skills', 'redteam', 'core', 'payloads_v6.py'),
+        os.path.join(os.path.dirname(__file__), 'payloads_v6.py'),
+        'payloads_v6.py',
+    ]
     
-    if not os.path.exists(payloads_file):
+    payloads_file = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            payloads_file = path
+            break
+    
+    if not payloads_file:
         print("⚠️ payloads_v6.py not found")
         return False
     
