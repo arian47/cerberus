@@ -263,4 +263,65 @@ def ascii_table():
     print(f"\n{Colors.BOLD}127: DEL{Colors.RESET}")
 
 
-__all__ = ["module_encoder"]
+__all__ = [
+    "module_encoder",
+    # Pure functions for testing
+    "base64_encode_text",
+    "base64_decode_text",
+    "url_encode_text", 
+    "url_decode_text",
+    "html_encode_text",
+    "html_decode_text",
+    "hex_encode_text",
+    "hex_decode_text",
+]
+
+
+# ============================================================
+# PURE FUNCTIONS (for testing)
+# ============================================================
+
+def base64_encode_text(text: str) -> str:
+    """Encode text to Base64 (pure function)"""
+    return base64.b64encode(text.encode()).decode()
+
+
+def base64_decode_text(text: str) -> Optional[str]:
+    """Decode Base64 to text (pure function)"""
+    try:
+        return base64.b64decode(text.encode()).decode()
+    except Exception:
+        return None
+
+
+def url_encode_text(text: str) -> str:
+    """URL encode text (pure function)"""
+    return urllib.parse.quote(text)
+
+
+def url_decode_text(text: str) -> str:
+    """URL decode text (pure function)"""
+    return urllib.parse.unquote(text)
+
+
+def html_encode_text(text: str) -> str:
+    """HTML encode text (pure function)"""
+    return html.escape(text)
+
+
+def html_decode_text(text: str) -> str:
+    """HTML decode text (pure function)"""
+    return html.unescape(text)
+
+
+def hex_encode_text(text: str) -> str:
+    """Encode text to hex (pure function)"""
+    return text.encode().hex()
+
+
+def hex_decode_text(text: str) -> Optional[str]:
+    """Decode hex to text (pure function)"""
+    try:
+        return bytes.fromhex(text).decode()
+    except Exception:
+        return None

@@ -188,4 +188,49 @@ def password_generator():
     print(f"\n{Colors.GRAY}Tip: Use a password manager to store passwords securely{Colors.RESET}")
 
 
-__all__ = ["module_hash_tools", "HASH_ALGORITHMS"]
+__all__ = [
+    "module_hash_tools", 
+    "HASH_ALGORITHMS",
+    # Pure functions for testing
+    "generate_hash_md5",
+    "generate_hash_sha256", 
+    "generate_hash_sha512",
+    "generate_hash_sha1",
+    "generate_hash_sha512",
+    "generate_hash_blake2b",
+    "generate_hash_blake2s",
+]
+
+
+# ============================================================
+# PURE HASH FUNCTIONS (for testing)
+# ============================================================
+
+def generate_hash_md5(text: str) -> str:
+    """Generate MD5 hash (pure function)"""
+    return hashlib.md5(text.encode()).hexdigest()
+
+
+def generate_hash_sha1(text: str) -> str:
+    """Generate SHA1 hash (pure function)"""
+    return hashlib.sha1(text.encode()).hexdigest()
+
+
+def generate_hash_sha256(text: str) -> str:
+    """Generate SHA256 hash (pure function)"""
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def generate_hash_sha512(text: str) -> str:
+    """Generate SHA512 hash (pure function)"""
+    return hashlib.sha512(text.encode()).hexdigest()
+
+
+def generate_hash_blake2b(text: str) -> str:
+    """Generate BLAKE2b hash (pure function)"""
+    return hashlib.blake2b(text.encode()).hexdigest()
+
+
+def generate_hash_blake2s(text: str) -> str:
+    """Generate BLAKE2s hash (pure function)"""
+    return hashlib.blake2s(text.encode()).hexdigest()
