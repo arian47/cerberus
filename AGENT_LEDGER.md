@@ -5,6 +5,24 @@
 
 ---
 
+## [2026-02-22 23:35] - Simplify Red Team to Two Options
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Modified:** `cerberus.py` - Simplified Red Team menu to only TWO options:
+  1. Custom prompt - user enters their own
+  2. Vulnerabilities found - shows full examples with option to modify
+
+### 2. Rationale & Architecture
+* **Why:** User wanted simpler flow - vulnerabilities found shows full example + edit field
+* Shows complete payload with proper formatting
+* User can modify before testing or use as-is
+
+### 3. Recommendations & Next Steps
+* Continue adding more vulnerabilities as discovered
+
+---
+
 ## [2026-02-22 23:25] - Add Model-Specific Bypasses to Red Team Menu
 **Task ID / PR Reference:** N/A
 

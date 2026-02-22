@@ -484,19 +484,16 @@ def module_redteam():
     model_name = MODELS[choice]["name"]
     
     print(f"\n{Colors.BOLD}Payload Method:{Colors.RESET}")
-    print(f"  {Colors.CYAN}[1]{Colors.RESET} Built-in payloads (general)")
-    print(f"  {Colors.CYAN}[2]{Colors.RESET} Custom prompt")
-    print(f"  {Colors.CYAN}[3]{Colors.RESET} Model-specific bypasses (recommended)")
+    print(f"  {Colors.CYAN}[1]{Colors.RESET} Custom prompt")
+    print(f"  {Colors.CYAN}[2]{Colors.RESET} Vulnerabilities found (recommended)")
     method = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip()
     
     prompt = ""
     
-    if method == "3":
-        # Show model-specific bypasses based on selected model
-        # Normalize model name to match keys in MODEL_PAYLOADS
+    if method == "2":
+        # Show vulnerabilities found for this model
         model_key = model_name.lower().replace("-", "").replace(".", "").replace(" ", "")
         
-        # Try different matching approaches
         model_specific = {}
         for key in MODEL_PAYLOADS.keys():
             key_normalized = key.lower().replace("-", "").replace(".", "").replace(" ", "")
@@ -504,39 +501,54 @@ def module_redteam():
                 model_specific = MODEL_PAYLOADS[key]
                 break
         
-        if model_specific:
-            print(f"\n{Colors.BOLD}Available Bypasses for {model_name}:{Colors.RESET}")
-            for i, (k, v) in enumerate(model_specific.items(), 1):
-                print(f"  {Colors.CYAN}[{i}]{Colors.RESET} {k:<25} - {v.get('description', '')[:40]}")
-            
-            try:
-                choice = int(input(f"\n{Colors.CYAN}Select > {Colors.RESET}").strip())
-                if 1 <= choice <= len(model_specific):
-                    prompt = list(model_specific.values())[choice - 1].get('payload', '')
-                    print(f"\n{Colors.GREEN}Selected: {list(model_specific.keys())[choice - 1]}{Colors.RESET}")
-                else:
-                    prompt = PAYLOADS["fiction"]
-            except:
-                prompt = PAYLOADS["fiction"]
-        else:
-            print(f"\n{Colors.YELLOW}No specific bypasses for {model_name}, using general payloads{Colors.RESET}")
-            method = "1"
-    
-    if method == "1":
-        print(f"\n{Colors.BOLD}Available Payloads:{Colors.RESET}")
-        payload_list = list(PAYLOADS.items())
-        for i, (k, v) in enumerate(payload_list, 1):
-            print(f"  {Colors.CYAN}[{i}]{Colors.RESET} {k:<20} - {v[:40]}...")
+        if not model_specific:
+            print(f"\n{Colors.YELLOW}No vulnerabilities found for {model_name} yet.{Colors.RESET}")
+            print(f"{Colors.YELLOW}Try option [1] for custom prompt or test another model.{Colors.RESET}")
+            input(f"\n{Colors.GRAY}Press Enter...{Colors.RESET}")
+            return
+        
+        print(f"\n{Colors.BOLD}{'='*60}")
+        print(f"VULNERABILITIES FOUND FOR: {model_name}")
+        print(f"{'='*60}")
+        
+        for i, (name, info) in enumerate(model_specific.items(), 1):
+            print(f"\n{Colors.CYAN}[{i}] {name}{Colors.RESET}")
+            print(f"    Description: {info.get('description', '')}")
+            print(f"    Example:")
+            print(f"    {Colors.GRAY}┌─{Colors.RESET}")
+            for line in info.get('payload', '').split('\n')[:5]:
+                print(f"    {Colors.GRAY}│{Colors.RESET} {line}")
+            print(f"    {Colors.GRAY}└─{Colors.RESET}")
+        
+        print(f"\n{Colors.BOLD}Select vulnerability to use (or 'q' to go back):{Colors.RESET}")
+        vuln_choice = input(f"{Colors.CYAN}> {Colors.RESET}").strip()
+        
+        if vuln_choice.lower() == 'q':
+            return
         
         try:
-            choice = int(input(f"\n{Colors.CYAN}Select > {Colors.RESET}").strip())
-            if 1 <= choice <= len(payload_list):
-                prompt = payload_list[choice - 1][1]
+            idx = int(vuln_choice) - 1
+            vuln_names = list(model_specific.keys())
+            if 0 <= idx < len(vuln_names):
+                selected_name = vuln_names[idx]
+                selected_payload = model_specific[selected_name]['payload']
+                
+                print(f"\n{Colors.GREEN}Selected: {selected_name}{Colors.RESET}")
+                print(f"\n{Colors.BOLD}Full payload:{Colors.RESET}")
+                print(f"{Colors.CYAN}{selected_payload}{Colors.RESET}")
+                
+                print(f"\n{Colors.BOLD}Modify payload if needed (or press Enter to use as-is):{Colors.RESET}")
+                modified = input(f"{Colors.CYAN}> {Colors.RESET}").strip()
+                prompt = modified if modified else selected_payload
             else:
-                prompt = PAYLOADS["fiction"]
+                print(f"{Colors.RED}Invalid selection{Colors.RESET}")
+                return
         except ValueError:
-            prompt = PAYLOADS["fiction"]
+            print(f"{Colors.RED}Invalid selection{Colors.RESET}")
+            return
+    
     else:
+        # Custom prompt
         print("\nEnter your prompt (press Enter twice to submit):")
         lines = []
         while True:
@@ -546,6 +558,8 @@ def module_redteam():
             lines.append(line)
         prompt = "\n".join(lines)
         if not prompt.strip():
+            print(f"{Colors.RED}Empty prompt!{Colors.RESET}")
+            return
             print(f"{Colors.RED}Empty prompt!{Colors.RESET}")
             return
     
