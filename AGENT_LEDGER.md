@@ -5,6 +5,22 @@
 
 ---
 
+## [2026-02-22 23:25] - Add Model-Specific Bypasses to Red Team Menu
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Modified:** `cerberus.py` - Added MODEL_PAYLOADS dictionary with model-specific bypasses
+* **Modified:** Added option [3] "Model-specific bypasses" in Red Team menu
+
+### 2. Rationale & Architecture
+* **Why:** Users want model-specific bypasses in the main Red Team flow, not Advanced Attacks
+* **New Flow:** Select model → [3] Model-specific bypasses → Shows bypasses for that specific model
+
+### 3. Recommendations & Next Steps
+* Add more models as we discover their bypasses
+
+---
+
 ## [2026-02-22 23:20] - Add MiniMax Bypasses to CLI Menu
 **Task ID / PR Reference:** N/A
 
