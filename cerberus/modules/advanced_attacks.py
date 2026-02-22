@@ -184,16 +184,19 @@ def test_advanced_payload(payload_id: str):
     
     print(f"\n{Colors.BOLD}Available models:{Colors.RESET}")
     for i, m in enumerate(available, 1):
-        print(f"  {i}. {m}")
+        print(f"  {Colors.CYAN}[{i}]{Colors.RESET} {m}")
     
     print(f"{Colors.CYAN}Select model > {Colors.RESET}", end="")
     model_choice = input().strip()
     
-    if model_choice not in MODELS:
+    # Convert to string key (e.g., "1" -> "1")
+    if model_choice not in [str(i) for i in range(1, len(available) + 1)]:
         print(f"{Colors.RED}Invalid model{Colors.RESET}")
         return
     
-    model_name = MODELS[model_choice]["name"]
+    # Get the actual model key from the available list
+    model_key = available[int(model_choice) - 1]
+    model_name = MODELS[model_key]["name"]
     
     print(box_title("Executing Attack"))
     connector = get_connector(model_name)

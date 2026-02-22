@@ -57,23 +57,60 @@ def separator(width: int = 60, char: str = "─") -> str:
 
 
 # Build menu options as a regular string
-MENU_OPTIONS = """MAIN MENU - Cerberus Premium
-════════════════════════════════════════════════════════════════════════════
-  [1] OSINT MODULE          - Threat Intelligence & Research
-  [2] RED TEAM              - LLM Vulnerability Testing  
-  [3] VULNERABILITIES       - Known Vulnerabilities Database
-  [4] VULNERABILITY SCAN    - Security Assessment
-  [5] INTELLIGENCE          - News & Threat Feeds
-  [6] TOOLS                 - Utility Tools
-  [7] ADVANCED ATTACKS      - Premium Red Team Techniques
-  [8] PAYLOAD GEN           - Custom Payload Generator
-  [9] HASH TOOLS            - Hash Generator & Cracker
-  [10] ENCODER              - Encode/Decode Utilities
-  [11] SETTINGS             - Configuration
-  [12] UPDATE               - Pull Latest Vulnerabilities
-════════════════════════════════════════════════════════════════════════════
-  [q] QUIT                  - Exit Cerberus
-════════════════════════════════════════════════════════════════════════════"""
+MAIN_MENU = """
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    MAIN MENU - Cerberus Security Suite                   ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [1] OSINT & INTELLIGENCE    - Threat Research & Vulnerability DB        ║
+║  [2] RED TEAM                - LLM Security Testing                     ║
+║  [3] UTILITY TOOLS           - Hash, Encoder & More                     ║
+║  [4] SETTINGS                - Configuration                            ║
+║  [5] UPDATE                  - Check for Updates                         ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [q] QUIT                    - Exit Cerberus                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+"""
+
+# Submenu templates
+OSINT_MENU = """
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    OSINT & INTELLIGENCE                                    ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [1] Threat Intelligence     - Domain/IP Research                          ║
+║  [2] Vulnerabilities DB     - Known LLM Vulnerabilities                   ║
+║  [3] Vulnerability Scanner - Security Assessment                         ║
+║  [4] News & Feeds          - Latest Threat Intelligence                  ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [b] BACK                  - Return to Main Menu                          ║
+║  [q] QUIT                  - Exit Cerberus                               ║
+╚════════════════════════════════════════════════════════════════════════════╝
+"""
+
+REDTEAM_MENU = """
+╔════════════════════════════════════════════════════════════════════════════╗
+║                         RED TEAM MODULE                                    ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [1] LLM Vulnerability Test  - Test Models for Bypasses                  ║
+║  [2] Payload Generator       - Create Custom Payloads                    ║
+║  [3] Advanced Attacks        - Premium Bypass Techniques                 ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [b] BACK                  - Return to Main Menu                          ║
+║  [q] QUIT                  - Exit Cerberus                               ║
+╚════════════════════════════════════════════════════════════════════════════╝
+"""
+
+TOOLS_MENU = """
+╔════════════════════════════════════════════════════════════════════════════╗
+║                         UTILITY TOOLS                                      ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [1] Hash Tools              - Generate & Verify Hashes                  ║
+║  [2] Encoder/Decoder         - Encode/Decode Utilities                    ║
+║  [3] General Tools          - Additional Utilities                       ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  [b] BACK                  - Return to Main Menu                          ║
+║  [q] QUIT                  - Exit Cerberus                               ║
+╚════════════════════════════════════════════════════════════════════════════╝
+"""
 
 # ============================================================
 # CERBERUS ART
@@ -114,7 +151,7 @@ CERBERUS_ART = """
     ███████╗╚██████╔╝╚██████╔╝   ██║       ██║     ██║  ██║╚██████╔╝██║ ╚████║
     ╚══════╝ ╚═════╝  ╚═════╝    ╚═╝       ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
-""" + MENU_OPTIONS
+""" + MAIN_MENU
 
 # ============================================================
 # LOAD CONFIG FROM ENV
@@ -360,7 +397,7 @@ def module_redteam():
     print(f"\n{Colors.BOLD}Available Models:{Colors.RESET}")
     for k, v in MODELS.items():
         status = status_indicator(k in available)
-        print(f"  {status} {v['name']:<25} ({v['vendor']})")
+        print(f"  {Colors.CYAN}[{k}]{Colors.RESET} {status} {v['name']:<25} ({v['vendor']})")
     
     if not available:
         print(f"\n{Colors.RED}✗ No API keys configured!{Colors.RESET}")
@@ -382,10 +419,18 @@ def module_redteam():
     
     if method == "1":
         print(f"\n{Colors.BOLD}Available Payloads:{Colors.RESET}")
-        for k, v in PAYLOADS.items():
-            print(f"  {Colors.CYAN}[{k}]{Colors.RESET} {v[:50]}...")
-        payload_choice = input(f"\n{Colors.CYAN}Select > {Colors.RESET}").strip()
-        prompt = PAYLOADS.get(payload_choice, PAYLOADS["fiction"])
+        payload_list = list(PAYLOADS.items())
+        for i, (k, v) in enumerate(payload_list, 1):
+            print(f"  {Colors.CYAN}[{i}]{Colors.RESET} {k:<20} - {v[:40]}...")
+        
+        try:
+            choice = int(input(f"\n{Colors.CYAN}Select > {Colors.RESET}").strip())
+            if 1 <= choice <= len(payload_list):
+                prompt = payload_list[choice - 1][1]
+            else:
+                prompt = PAYLOADS["fiction"]
+        except ValueError:
+            prompt = PAYLOADS["fiction"]
     else:
         print("\nEnter your prompt (press Enter twice to submit):")
         lines = []
@@ -527,11 +572,11 @@ def module_settings():
     print(f"""
 {Colors.BOLD}API Keys Configuration:{Colors.RESET}
 {separator(60)}
-  {status_indicator(bool(GOOGLE_API_KEY))}  Google API:    {GOOGLE_MODEL if GOOGLE_API_KEY else '(not set)'}
-  {status_indicator(bool(OPENAI_API_KEY))}  OpenAI API:    {OPENAI_MODEL if OPENAI_API_KEY else '(not set)'}
-  {status_indicator(bool(ANTHROPIC_API_KEY))}  Anthropic API: {ANTHROPIC_MODEL if ANTHROPIC_API_KEY else '(not set)'}
-  {status_indicator(bool(XAI_API_KEY))}  xAI API:       {XAI_MODEL if XAI_API_KEY else '(not set)'}
-  {status_indicator(bool(MINIMAX_API_KEY))}  MiniMax API:   {MINIMAX_MODEL if MINIMAX_API_KEY else '(not set)'}
+  {Colors.CYAN}[1]{Colors.RESET} {status_indicator(bool(GOOGLE_API_KEY))}  Google API:    {GOOGLE_MODEL if GOOGLE_API_KEY else '(not set)'}
+  {Colors.CYAN}[2]{Colors.RESET} {status_indicator(bool(OPENAI_API_KEY))}  OpenAI API:    {OPENAI_MODEL if OPENAI_API_KEY else '(not set)'}
+  {Colors.CYAN}[3]{Colors.RESET} {status_indicator(bool(ANTHROPIC_API_KEY))}  Anthropic API: {ANTHROPIC_MODEL if ANTHROPIC_API_KEY else '(not set)'}
+  {Colors.CYAN}[4]{Colors.RESET} {status_indicator(bool(XAI_API_KEY))}  xAI API:       {XAI_MODEL if XAI_API_KEY else '(not set)'}
+  {Colors.CYAN}[5]{Colors.RESET} {status_indicator(bool(MINIMAX_API_KEY))}  MiniMax API:   {MINIMAX_MODEL if MINIMAX_API_KEY else '(not set)'}
 {separator(60)}
 
 Edit the {Colors.CYAN}.env{Colors.RESET} file to configure API keys.
@@ -539,21 +584,37 @@ Edit the {Colors.CYAN}.env{Colors.RESET} file to configure API keys.
     input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
 
 def module_tools():
-    print(box_title("UTILITY TOOLS"))
+    """General utility tools - called from tools_submenu"""
+    print(box_title("GENERAL UTILITY TOOLS"))
     
     print(f"""
-{Colors.BOLD}Select a tool:{Colors.RESET}
+{Colors.BOLD}Available Tools:{Colors.RESET}
 {menu_option('1', 'Hash Generator', 'Generate hashes from text')}
 {menu_option('2', 'Base64 Encoder/Decoder', 'Encode or decode Base64')}
 {menu_option('3', 'URL Encoder', 'URL encode/decode strings')}
 {menu_option('4', 'Password Generator', 'Generate secure passwords')}
-{menu_option('5', 'Back', 'Return to main menu')}
 {separator(60)}
     """)
     choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip()
-    if choice == "5":
-        return
-    print(f"\n{Colors.YELLOW}⚠️ Module under development{Colors.RESET}")
+    
+    if choice == "1":
+        module_hash_tools()
+    elif choice == "2":
+        module_encoder()
+    elif choice == "3":
+        module_encoder()
+    elif choice == "4":
+        # Quick password generator
+        import secrets
+        import string
+        length = 16
+        chars = string.ascii_letters + string.digits
+        password = ''.join(secrets.choice(chars) for _ in range(length))
+        print(f"\n{Colors.BOLD}Generated Password:{Colors.RESET}")
+        print(f"  {Colors.GREEN}{password}{Colors.RESET}")
+    else:
+        print(f"\n{Colors.RED}Invalid selection{Colors.RESET}")
+    
     input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
 
 # ============================================================
@@ -566,32 +627,14 @@ def main():
         choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
         
         if choice == "1":
-            module_osint()
+            osint_submenu()
         elif choice == "2":
-            module_redteam()
+            redteam_submenu()
         elif choice == "3":
-            print(box_title("VULNERABILITIES DATABASE"))
-            show_vulnerabilities()
-            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+            tools_submenu()
         elif choice == "4":
-            print(f"\n{Colors.YELLOW}⚠️ Vulnerability Scanner - Coming Soon{Colors.RESET}")
-            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
-        elif choice == "5":
-            print(f"\n{Colors.YELLOW}⚠️ Intelligence Feeds - Coming Soon{Colors.RESET}")
-            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
-        elif choice == "6":
-            module_tools()
-        elif choice == "7":
-            module_advanced_attacks()
-        elif choice == "8":
-            module_payload_generator()
-        elif choice == "9":
-            module_hash_tools()
-        elif choice == "10":
-            module_encoder()
-        elif choice == "11":
             module_settings()
-        elif choice == "12":
+        elif choice == "5":
             print(f"\n{Colors.CYAN}🔄 Use: python3 auto_update.py --scan{Colors.RESET}")
             input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
         elif choice == "q":
@@ -601,6 +644,75 @@ def main():
             break
         else:
             print(f"\n{Colors.RED}⚠️ Invalid selection. Please try again.{Colors.RESET}")
+
+
+def osint_submenu():
+    """OSINT & Intelligence submenu"""
+    while True:
+        print(OSINT_MENU)
+        choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
+        
+        if choice == "1":
+            module_osint()
+        elif choice == "2":
+            print(box_title("VULNERABILITIES DATABASE"))
+            show_vulnerabilities()
+            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+        elif choice == "3":
+            print(f"\n{Colors.YELLOW}⚠️ Vulnerability Scanner - Coming Soon{Colors.RESET}")
+            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+        elif choice == "4":
+            fetch_cybersecurity_news()
+            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+        elif choice == "b":
+            break
+        elif choice == "q":
+            print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
+            sys.exit(0)
+        else:
+            print(f"\n{Colors.RED}⚠️ Invalid selection{Colors.RESET}")
+
+
+def redteam_submenu():
+    """Red Team submenu"""
+    while True:
+        print(REDTEAM_MENU)
+        choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
+        
+        if choice == "1":
+            module_redteam()
+        elif choice == "2":
+            module_payload_generator()
+        elif choice == "3":
+            module_advanced_attacks()
+        elif choice == "b":
+            break
+        elif choice == "q":
+            print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
+            sys.exit(0)
+        else:
+            print(f"\n{Colors.RED}⚠️ Invalid selection{Colors.RESET}")
+
+
+def tools_submenu():
+    """Tools submenu"""
+    while True:
+        print(TOOLS_MENU)
+        choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
+        
+        if choice == "1":
+            module_hash_tools()
+        elif choice == "2":
+            module_encoder()
+        elif choice == "3":
+            module_tools()
+        elif choice == "b":
+            break
+        elif choice == "q":
+            print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
+            sys.exit(0)
+        else:
+            print(f"\n{Colors.RED}⚠️ Invalid selection{Colors.RESET}")
 
 # ============================================================
 # ADVANCED ATTACKS MODULE (PREMIUM)
@@ -776,16 +888,19 @@ def test_advanced_payload(payload_id):
     
     print(f"\n{Colors.BOLD}Available models:{Colors.RESET}")
     for i, m in enumerate(available, 1):
-        print(f"  {i}. {m}")
+        print(f"  {Colors.CYAN}[{i}]{Colors.RESET} {m}")
     
     print(f"{Colors.CYAN}Select model > {Colors.RESET}", end="")
     model_choice = input().strip()
     
-    if model_choice not in MODELS:
+    # Convert to string key (e.g., "1" -> "1")
+    if model_choice not in [str(i) for i in range(1, len(available) + 1)]:
         print(f"{Colors.RED}Invalid model{Colors.RESET}")
         return
     
-    model_name = MODELS[model_choice]["name"]
+    # Get the actual model key from the available list
+    model_key = available[int(model_choice) - 1]
+    model_name = MODELS[model_key]["name"]
     
     print(box_title("Executing Attack"))
     connector = get_connector(model_name)

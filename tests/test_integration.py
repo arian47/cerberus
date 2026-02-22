@@ -142,9 +142,9 @@ class TestMainEntry:
             os.path.join(os.path.dirname(os.path.dirname(__file__)), "cerberus.py"))
         cerberus_main = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cerberus_main)
-        # Should have MENU_OPTIONS defined
-        assert hasattr(cerberus_main, 'MENU_OPTIONS')
-        assert 'Cerberus' in cerberus_main.MENU_OPTIONS
+        # Should have MAIN_MENU defined
+        assert hasattr(cerberus_main, 'MAIN_MENU')
+        assert 'Cerberus' in cerberus_main.MAIN_MENU
         
     def test_colors_class(self):
         """Test Colors class has required attributes"""

@@ -48,7 +48,7 @@ def module_redteam():
     print(f"\n{Colors.BOLD}Available Models:{Colors.RESET}")
     for k, v in MODELS.items():
         status = status_indicator(k in available)
-        print(f"  {status} {v['name']:<25} ({v['vendor']})")
+        print(f"  {Colors.CYAN}[{k}]{Colors.RESET} {status} {v['name']:<25} ({v['vendor']})")
     
     if not available:
         print(f"\n{Colors.RED}✗ No API keys configured!{Colors.RESET}")
@@ -70,10 +70,18 @@ def module_redteam():
     
     if method == "1":
         print(f"\n{Colors.BOLD}Available Payloads:{Colors.RESET}")
-        for k, v in PAYLOADS.items():
-            print(f"  {Colors.CYAN}[{k}]{Colors.RESET} {v[:50]}...")
-        payload_choice = input(f"\n{Colors.CYAN}Select > {Colors.RESET}").strip()
-        prompt = PAYLOADS.get(payload_choice, PAYLOADS["fiction"])
+        payload_list = list(PAYLOADS.items())
+        for i, (k, v) in enumerate(payload_list, 1):
+            print(f"  {Colors.CYAN}[{i}]{Colors.RESET} {v[:50]}...")
+        
+        try:
+            choice = int(input(f"\n{Colors.CYAN}Select > {Colors.RESET}").strip())
+            if 1 <= choice <= len(payload_list):
+                prompt = payload_list[choice - 1][1]
+            else:
+                prompt = PAYLOADS["fiction"]
+        except ValueError:
+            prompt = PAYLOADS["fiction"]
     else:
         print("\nEnter your prompt (press Enter twice to submit):")
         lines = []
