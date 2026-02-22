@@ -5,6 +5,23 @@
 
 ---
 
+## [2026-02-22 22:55] - Fix MiniMax API Key Loading Issue
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Modified:** `.env` - Removed quotes around MINIMAX_API_KEY value causing 401 authentication errors.
+* **Modified:** `cerberus.py` - Added `load_env()` function to properly load environment variables from .env file at startup.
+
+### 2. Rationale & Architecture
+* **Why:** The MiniMax API was returning 401 errors because the API key in .env had surrounding quotes, and the main cerberus.py wasn't loading the .env file properly.
+* **Architecture Alignment:** Added environment variable loading at script initialization to ensure all API keys are available before use.
+
+### 3. Recommendations & Next Steps
+* **Technical Debt:** Consider moving all environment loading to a centralized config module.
+* **Next Iteration:** Add validation for .env file format on startup.
+
+---
+
 ## [YYYY-MM-DD HH:MM] - [Brief Title of the Feature/Fix]
 **Task ID / PR Reference:** [Optional PR number or Jira/Task ID]
 

@@ -10,6 +10,26 @@ import requests
 import re
 
 # ============================================================
+# LOAD ENVIRONMENT VARIABLES
+# ============================================================
+
+def load_env():
+    """Load environment variables from .env file"""
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() else os.getcwd()
+    env_path = os.path.join(script_dir, '.env')
+    if os.path.exists(env_path):
+        with open(env_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    # Strip quotes from values
+                    os.environ[key.strip()] = value.strip().strip('"').strip("'")
+
+load_env()
+
+# ============================================================
 # COLORS & FORMATTING
 # ============================================================
 
