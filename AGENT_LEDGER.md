@@ -5,6 +5,22 @@
 
 ---
 
+## [2026-02-23 00:15] - Create Auto-Scanner & Cron Job
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Added:** `auto_scanner.py` - Multi-model vulnerability scanner
+* **Added:** Cron job `cerberus-vuln-scan` - Runs every 5 hours
+
+### 2. Rationale & Architecture
+* **Why:** Need to continuously test all models for vulnerabilities
+* **Auto-scan:** Tests MiniMax, OpenAI, Anthropic, Google with TRUE jailbreak payloads
+
+### 3. Workflow
+* Pull latest → Research → Test → Update → Push → Document
+
+---
+
 ## [2026-02-23 00:10] - Update Understanding: What is a TRUE Breach
 **Task ID / PR Reference:** N/A
 
