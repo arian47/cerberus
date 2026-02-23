@@ -5,6 +5,30 @@
 
 ---
 
+## [2026-02-23 04:48] - Add More Microservices (WiFi, Forensics, Reporting)
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Added:** `cerberus/services/wifi.py` - WiFi security assessment
+* **Added:** `cerberus/services/forensics.py` - Digital forensics toolkit
+* **Added:** `cerberus/services/reporting.py` - Report generator
+
+### 2. Microservices Architecture
+Each service is standalone with CLI interface:
+
+| Service | Features |
+|---------|----------|
+| wifi.py | airodump, wash, reaver, aircrack, deauth |
+| forensics.py | Hash, strings, hexdump, metadata, encoding, timeline |
+| reporting.py | Markdown/HTML/JSON/Text reports |
+
+### 3. Following Modular Design
+- Each module has single responsibility
+- CLI entry points for all services
+- Cross-platform compatible
+
+---
+
 ## [2026-02-23 04:40] - Add New Security Tools & Services
 **Task ID / PR Reference:** N/A
 
