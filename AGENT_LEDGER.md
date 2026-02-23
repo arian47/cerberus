@@ -5,6 +5,25 @@
 
 ---
 
+## [2026-02-23 01:08] - Add Research Module & Cron Job
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Added:** `cerberus/modules/research.py` - Security tools research module
+* **Added:** Cron job `cerberus-research` - Runs every 2 hours
+
+### 2. Rationale & Architecture
+* **Why:** Need continuous research on pentesting/Kali Linux tools
+* **Research:** Scans for available tools, generates integration code
+* **Modular:** Following microservices architecture
+
+### 3. Following RULES.md
+* Pre-execution: Plan → Get approval → Implement → Document
+* Modular design with single-responsibility modules
+* Comprehensive documentation
+
+---
+
 ## [2026-02-23 00:15] - Create Auto-Scanner & Cron Job
 **Task ID / PR Reference:** N/A
 
