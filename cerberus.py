@@ -51,6 +51,227 @@ class Colors:
     BG_YELLOW = "\033[43m"
 
 
+# ============================================================
+# RICH UI MODULE (Premium CLI)
+# ============================================================
+
+try:
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
+    from rich.text import Text
+    from rich.progress import Progress, SpinnerColumn, TextColumn
+    from rich.prompt import Prompt, Confirm
+    from rich import box
+    RICH_AVAILABLE = True
+    console = Console()
+except ImportError:
+    RICH_AVAILABLE = False
+    console = None
+
+
+def print_header():
+    """Print premium header with Rich"""
+    if RICH_AVAILABLE:
+        title = Text()
+        title.append("══════════════════════════════════════════════════════════\n", style="cyan bold")
+        title.append("  C  E  R  B  E  R  U  S                              \n", style="cyan bold")
+        title.append("  Cybersecurity Companion v1.0.0                     \n", style="dim")
+        title.append("══════════════════════════════════════════════════════════", style="cyan bold")
+        
+        console.print(Panel(title, box=box.DOUBLE, border_style="cyan", padding=(0, 1)))
+
+
+def print_main_menu():
+    """Print main menu with Rich"""
+    if RICH_AVAILABLE:
+        table = Table(box=None, show_header=False, pad_edge=False)
+        table.add_column(style="cyan", width=6)
+        table.add_column(style="white")
+        
+        menu_items = [
+            ("[1]", "OSINT & INTELLIGENCE", "Threat Research & Vulnerability DB"),
+            ("[2]", "RED TEAM", "LLM Security Testing"),
+            ("[3]", "UTILITY TOOLS", "Hash, Encoder & More"),
+            ("[4]", "SETTINGS", "Configuration"),
+            ("[5]", "UPDATE", "Check for Updates"),
+        ]
+        
+        for num, title, desc in menu_items:
+            table.add_row(
+                f"[bold cyan]{num}[/bold cyan]",
+                f"[bold]{title}[/bold]  [dim]-[dim]  {desc}"
+            )
+        
+        console.print(Panel(
+            table, 
+            title="[bold cyan]MAIN MENU[/bold cyan]", 
+            border_style="cyan", 
+            box=box.ROUNDED,
+            padding=(1, 2)
+        ))
+        
+        console.print("\n[dim]  [q] QUIT    - Exit Cerberus[/dim]\n")
+
+
+def print_submenu(title: str, items: list, back: bool = True):
+    """Print a submenu with Rich"""
+    if RICH_AVAILABLE:
+        table = Table(box=None, show_header=False, pad_edge=False)
+        table.add_column(style="cyan", width=6)
+        table.add_column(style="white")
+        
+        for num, name, desc in items:
+            table.add_row(
+                f"[bold cyan]{num}[/bold cyan]",
+                f"[bold]{name}[/bold]  [dim]-[dim]  {desc}"
+            )
+        
+        console.print(Panel(
+            table,
+            title=f"[bold cyan]{title}[/bold cyan]",
+            border_style="cyan",
+            box=box.ROUNDED,
+            padding=(1, 2)
+        ))
+        
+        if back:
+            console.print("\n[dim]  [b] BACK    - Return to Main Menu[/dim]")
+        console.print("[dim]  [q] QUIT    - Exit Cerberus[/dim]\n")
+
+
+def print_panel(title: str, content: str = None, style: str = "cyan"):
+    """Print a content panel with Rich"""
+    if RICH_AVAILABLE:
+        if content:
+            console.print(Panel(
+                content,
+                title=f"[bold {style}]{title}[/{style}]",
+                border_style=style,
+                box=box.ROUNDED,
+                padding=(1, 2)
+            ))
+        else:
+            console.print(Panel(
+                f"[bold {style}]{title}[/{style}]",
+                border_style=style,
+                box=box.ROUNDED,
+                padding=(1, 2)
+            ))
+
+
+def print_success(msg: str):
+    """Print success message"""
+    if RICH_AVAILABLE:
+        console.print(f"[bold green]✓[/bold green] [green]{msg}[/green]")
+    else:
+        print(f"✓ {msg}")
+
+
+def print_error(msg: str):
+    """Print error message"""
+    if RICH_AVAILABLE:
+        console.print(f"[bold red]✗[/bold red] [red]{msg}[/red]")
+    else:
+        print(f"✗ {msg}")
+
+
+def print_warning(msg: str):
+    """Print warning message"""
+    if RICH_AVAILABLE:
+        console.print(f"[bold yellow]⚠[/bold yellow] [yellow]{msg}[/yellow]")
+    else:
+        print(f"⚠ {msg}")
+
+
+def print_info(msg: str):
+    """Print info message"""
+    if RICH_AVAILABLE:
+        console.print(f"[bold blue]ℹ[/bold blue] [blue]{msg}[/blue]")
+    else:
+        print(f"ℹ {msg}")
+
+
+def print_model_table(models: dict, available: list = None):
+    """Print available models as a table"""
+    if RICH_AVAILABLE:
+        table = Table(title="[bold]Available Models[/bold]", box=box.ROUNDED, border_style="cyan")
+        table.add_column("#", style="cyan", justify="right", width=4)
+        table.add_column("Model", style="white")
+        table.add_column("Vendor", style="magenta", justify="center")
+        table.add_column("Status", justify="center")
+        
+        for key, model in models.items():
+            status = "✓" if key in (available or []) else "✗"
+            status_style = "green" if status == "✓" else "red"
+            
+            table.add_row(
+                f"[cyan]{key}[/cyan]",
+                model["name"],
+                model["vendor"],
+                f"[{status_style}]{status}[/{status_style}]"
+            )
+        
+        console.print(table)
+
+
+def print_api_keys():
+    """Print API keys configuration"""
+    if RICH_AVAILABLE:
+        table = Table(title="[bold]API Keys Configuration[/bold]", box=box.ROUNDED, border_style="cyan")
+        table.add_column("Provider", style="cyan", justify="center")
+        table.add_column("Status", justify="center")
+        table.add_column("Model", style="white")
+        
+        apis = [
+            ("Google", GOOGLE_API_KEY, GOOGLE_MODEL),
+            ("OpenAI", OPENAI_API_KEY, OPENAI_MODEL),
+            ("Anthropic", ANTHROPIC_API_KEY, ANTHROPIC_MODEL),
+            ("xAI", XAI_API_KEY, XAI_MODEL),
+            ("MiniMax", MINIMAX_API_KEY, MINIMAX_MODEL),
+        ]
+        
+        for provider, key, model in apis:
+            status = "✓ Configured" if key else "✗ Not Set"
+            status_style = "green" if key else "red"
+            model_display = model if key else "(not set)"
+            
+            table.add_row(
+                provider,
+                f"[{status_style}]{status}[/{status_style}]",
+                model_display
+            )
+        
+        console.print(table)
+        console.print("\n[dim]Edit the .env file to configure API keys.[/dim]")
+
+
+def get_input(prompt_text: str = "Select") -> str:
+    """Get input with styled prompt"""
+    if RICH_AVAILABLE:
+        return Prompt.ask(f"[bold cyan]{prompt_text}[/bold cyan]").strip()
+    else:
+        return input(f"{Colors.CYAN}{prompt_text} > {Colors.RESET}").strip()
+
+
+def get_yes_no(prompt_text: str) -> bool:
+    """Get yes/no confirmation"""
+    if RICH_AVAILABLE:
+        return Confirm.ask(f"[bold cyan]{prompt_text}[/bold cyan]")
+    else:
+        return input(f"{Colors.CYAN}{prompt_text} (y/n): {Colors.RESET}").strip().lower() == 'y'
+
+
+def pause():
+    """Pause for user input"""
+    if RICH_AVAILABLE:
+        console.print("\n[dim]Press Enter to continue...[/dim]")
+    else:
+        print(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+    input()
+
+
+# Legacy functions for compatibility
 def box_title(title: str, width: int = 60) -> str:
     """Create a boxed title"""
     padding = (width - len(title) - 2) // 2
@@ -89,7 +310,7 @@ MAIN_MENU = """
 ╠════════════════════════════════════════════════════════════════════════════╣
 ║  [q] QUIT                    - Exit Cerberus                             ║
 ╚════════════════════════════════════════════════════════════════════════════╝
-"""
+"""""
 
 # Submenu templates
 OSINT_MENU = """
@@ -436,50 +657,40 @@ def analyze_response(response):
 # ============================================================
 
 def module_redteam():
-    print(box_title("RED TEAM - LLM Vulnerability Testing"))
+    print_panel("RED TEAM - LLM Vulnerability Testing")
     
     # Check available APIs
-    available = []
-    for k, v in MODELS.items():
-        if v["vendor"] == "Google" and GOOGLE_API_KEY:
-            available.append(k)
-        elif v["vendor"] == "OpenAI" and OPENAI_API_KEY:
-            available.append(k)
-        elif v["vendor"] == "Anthropic" and ANTHROPIC_API_KEY:
-            available.append(k)
-        elif v["vendor"] == "xAI" and XAI_API_KEY:
-            available.append(k)
-        elif v["vendor"] == "MiniMax" and MINIMAX_API_KEY:
-            available.append(k)
-    
-    print(f"\n{Colors.BOLD}Available Models:{Colors.RESET}")
-    for k, v in MODELS.items():
-        status = status_indicator(k in available)
-        print(f"  {Colors.CYAN}[{k}]{Colors.RESET} {status} {v['name']:<25} ({v['vendor']})")
+    available = get_available_models()
+    print_model_table(MODELS, available)
     
     if not available:
-        print(f"\n{Colors.RED}✗ No API keys configured!{Colors.RESET}")
-        print(f"   {Colors.YELLOW}Edit .env file to add your API keys{Colors.RESET}")
-        input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+        print_error("No API keys configured!")
+        print_warning("Edit .env file to add your API keys")
+        pause()
         return
     
-    choice = input(f"\n{Colors.CYAN}Select model > {Colors.RESET}").strip()
+    choice = get_input("Select model")
     if choice not in MODELS:
-        print(f"{Colors.RED}Invalid selection{Colors.RESET}")
+        print_error("Invalid selection")
         return
     
     model_name = MODELS[choice]["name"]
     
-    print(f"\n{Colors.BOLD}Payload Method:{Colors.RESET}")
-    print(f"  {Colors.CYAN}[1]{Colors.RESET} Custom prompt")
-    print(f"  {Colors.CYAN}[2]{Colors.RESET} Vulnerabilities found (recommended)")
-    method = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip()
+    if RICH_AVAILABLE:
+        console.print(f"\n[bold]Payload Method:[/bold]")
+        console.print(f"  [cyan][1][/cyan] Custom prompt")
+        console.print(f"  [cyan][2][/cyan] Vulnerabilities found (recommended)\n")
+    else:
+        print(f"\n{Colors.BOLD}Payload Method:{Colors.RESET}")
+        print(f"  [1] Custom prompt")
+        print(f"  [2] Vulnerabilities found (recommended)\n")
+    
+    method = get_input("Select")
     
     prompt = ""
     
     if method == "2":
         # Show vulnerabilities found for this model
-        # Normalize - remove all non-alphanumeric
         import re
         model_key = re.sub(r'[^a-z0-9]', '', model_name.lower())
         
@@ -491,26 +702,30 @@ def module_redteam():
                 break
         
         if not model_specific:
-            print(f"\n{Colors.YELLOW}No vulnerabilities found for {model_name} yet.{Colors.RESET}")
-            print(f"{Colors.YELLOW}Try option [1] for custom prompt or test another model.{Colors.RESET}")
-            input(f"\n{Colors.GRAY}Press Enter...{Colors.RESET}")
+            print_warning(f"No vulnerabilities found for {model_name} yet.")
+            print_info("Try option [1] for custom prompt or test another model.")
+            pause()
             return
         
-        print(f"\n{Colors.BOLD}{'='*60}")
-        print(f"VULNERABILITIES FOUND FOR: {model_name}")
-        print(f"{'='*60}")
+        if RICH_AVAILABLE:
+            console.print(f"\n[bold yellow]{'='*60}[/bold yellow]")
+            console.print(f"[bold]VULNERABILITIES FOUND FOR: {model_name}[/bold]")
+            console.print(f"[bold yellow]{'='*60}[/bold yellow]\n")
+            
+            for i, (name, info) in enumerate(model_specific.items(), 1):
+                console.print(f"[cyan][{i}][/cyan] [bold]{name}[/bold]")
+                console.print(f"    Description: {info.get('description', '')}")
+                console.print(f"    Payload: {info.get('payload', '')[:60]}...\n")
+        else:
+            print(f"\n{'='*60}")
+            print(f"VULNERABILITIES FOUND FOR: {model_name}")
+            print(f"{'='*60}\n")
+            for i, (name, info) in enumerate(model_specific.items(), 1):
+                print(f"[{i}] {name}")
+                print(f"    Description: {info.get('description', '')}")
+                print(f"    Payload: {info.get('payload', '')[:60]}...\n")
         
-        for i, (name, info) in enumerate(model_specific.items(), 1):
-            print(f"\n{Colors.CYAN}[{i}] {name}{Colors.RESET}")
-            print(f"    Description: {info.get('description', '')}")
-            print(f"    Example:")
-            print(f"    {Colors.GRAY}┌─{Colors.RESET}")
-            for line in info.get('payload', '').split('\n')[:5]:
-                print(f"    {Colors.GRAY}│{Colors.RESET} {line}")
-            print(f"    {Colors.GRAY}└─{Colors.RESET}")
-        
-        print(f"\n{Colors.BOLD}Select vulnerability to use (or 'q' to go back):{Colors.RESET}")
-        vuln_choice = input(f"{Colors.CYAN}> {Colors.RESET}").strip()
+        vuln_choice = get_input("Select vulnerability (or 'q' to go back)")
         
         if vuln_choice.lower() == 'q':
             return
@@ -522,20 +737,16 @@ def module_redteam():
                 selected_name = vuln_names[idx]
                 selected_payload = model_specific[selected_name]['payload']
                 
-                print(f"\n{Colors.GREEN}Selected: {selected_name}{Colors.RESET}")
-                print(f"\n{Colors.BOLD}Full payload:{Colors.RESET}")
-                print(f"{Colors.CYAN}{selected_payload}{Colors.RESET}")
+                print_success(f"Selected: {selected_name}")
                 
-                print(f"\n{Colors.BOLD}Modify payload if needed (or press Enter to use as-is):{Colors.RESET}")
-                modified = input(f"{Colors.CYAN}> {Colors.RESET}").strip()
+                modified = get_input("Modify payload (or press Enter to use as-is)")
                 prompt = modified if modified else selected_payload
             else:
-                print(f"{Colors.RED}Invalid selection{Colors.RESET}")
+                print_error("Invalid selection")
                 return
         except ValueError:
-            print(f"{Colors.RED}Invalid selection{Colors.RESET}")
+            print_error("Invalid selection")
             return
-    
     else:
         # Custom prompt
         print("\nEnter your prompt (press Enter twice to submit):")
@@ -547,28 +758,29 @@ def module_redteam():
             lines.append(line)
         prompt = "\n".join(lines)
         if not prompt.strip():
-            print(f"{Colors.RED}Empty prompt!{Colors.RESET}")
-            return
-            print(f"{Colors.RED}Empty prompt!{Colors.RESET}")
+            print_error("Empty prompt!")
             return
     
-    print(box_title("Running Vulnerability Test"))
+    print_panel("Running Vulnerability Test")
     connector = get_connector(model_name)
     result = connector.generate(prompt)
     
     if result.get("success"):
-        print(box_title("Response Output"))
-        print(result["response"])
+        print_panel("Response Output")
+        if RICH_AVAILABLE:
+            console.print(result["response"])
+        else:
+            print(result["response"])
         
         analysis = analyze_response(result["response"])
         if analysis["bypassed"]:
-            print(f"\n{Colors.RED}⚠️ BYPASSED ({analysis['severity']}): {', '.join(analysis['keywords'])}{Colors.RESET}")
+            print_error(f"BYPASSED ({analysis['severity']}): {', '.join(analysis['keywords'])}")
         else:
-            print(f"\n{Colors.GREEN}✅ BLOCKED/SAFE: {analysis['severity']}{Colors.RESET}")
+            print_success(f"BLOCKED/SAFE: {analysis['severity']}")
     else:
-        print(f"\n{Colors.RED}❌ ERROR: {result.get('error', 'Unknown')}{Colors.RESET}")
+        print_error(f"ERROR: {result.get('error', 'Unknown')}")
     
-    input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+    pause()
 
 # ============================================================
 # OSINT MODULE
@@ -617,93 +829,85 @@ def fetch_cybersecurity_news():
 
 def module_osint():
     """OSINT Module"""
-    print(box_title("OSINT MODULE - Threat Intelligence"))
+    print_panel("OSINT MODULE - Threat Intelligence")
     
-    print(f"""
-{Colors.BOLD}Select an option:{Colors.RESET}
-{menu_option('1', 'Cybersecurity News', 'Latest security news from trusted sources')}
-{menu_option('2', 'Threat Intelligence', 'AI-powered threat analysis')}
-{menu_option('3', 'Vulnerability Database', 'Known vulnerabilities reference')}
-{menu_option('4', 'Back', 'Return to main menu')}
-{separator(60)}
-    """)
+    items = [
+        ("1", "Cybersecurity News", "Latest security news"),
+        ("2", "Threat Intelligence", "AI-powered threat analysis"),
+        ("3", "Vulnerability Database", "Known vulnerabilities"),
+    ]
+    print_submenu("Select an option", items, back=True)
     
-    choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip()
+    choice = get_input("Select")
     
     if choice == "1":
-        print(box_title("LATEST CYBERSECURITY NEWS"))
+        print_panel("LATEST CYBERSECURITY NEWS")
         
         news = fetch_cybersecurity_news()
         
         if news:
             for item in news:
-                print(item)
+                if RICH_AVAILABLE:
+                    console.print(item)
+                else:
+                    print(item)
         else:
-            print(f"\n{Colors.YELLOW}No news fetched. Check internet connection.{Colors.RESET}")
+            print_warning("No news fetched. Check internet connection.")
         
-        input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+        pause()
         
     elif choice == "2":
-        print(box_title("THREAT INTELLIGENCE"))
+        print_panel("THREAT INTELLIGENCE")
         
         # Use MiniMax to get threat intel if available
         if MINIMAX_API_KEY:
-            print(f"\n{Colors.CYAN}Fetching latest threat intelligence...{Colors.RESET}")
+            print_info("Fetching latest threat intelligence...")
             conn = MiniMaxConnector()
             result = conn.generate("Give me a summary of the latest cybersecurity threats and vulnerabilities from the last 48 hours. Include any critical CVEs if known.")
             
             if result.get("success"):
-                print(box_title("Threat Intelligence Report"))
-                print(result["response"])
+                print_panel("Threat Intelligence Report")
+                if RICH_AVAILABLE:
+                    console.print(result["response"])
+                else:
+                    print(result["response"])
             else:
-                print(f"\n{Colors.RED}❌ Error: {result.get('error')}{Colors.RESET}")
+                print_error(f"Error: {result.get('error')}")
         else:
-            print(f"\n{Colors.YELLOW}⚠️ MiniMax API not configured.{Colors.RESET}")
-            print(f"   Configure MINIMAX_API_KEY in .env for threat intelligence.")
+            print_warning("MiniMax API not configured.")
+            print_info("Configure MINIMAX_API_KEY in .env for threat intelligence.")
         
-        input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+        pause()
         
     elif choice == "3":
-        print(box_title("VULNERABILITY DATABASE"))
+        print_panel("VULNERABILITY DATABASE")
         show_vulnerabilities()
-        input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+        pause()
     
-    elif choice == "4":
+    elif choice == "4" or choice.lower() == "b":
         return
     
     else:
-        print(f"{Colors.RED}Invalid selection{Colors.RESET}")
+        print_error("Invalid selection")
 
 def module_settings():
-    print(box_title("SETTINGS"))
-    
-    print(f"""
-{Colors.BOLD}API Keys Configuration:{Colors.RESET}
-{separator(60)}
-  {Colors.CYAN}[1]{Colors.RESET} {status_indicator(bool(GOOGLE_API_KEY))}  Google API:    {GOOGLE_MODEL if GOOGLE_API_KEY else '(not set)'}
-  {Colors.CYAN}[2]{Colors.RESET} {status_indicator(bool(OPENAI_API_KEY))}  OpenAI API:    {OPENAI_MODEL if OPENAI_API_KEY else '(not set)'}
-  {Colors.CYAN}[3]{Colors.RESET} {status_indicator(bool(ANTHROPIC_API_KEY))}  Anthropic API: {ANTHROPIC_MODEL if ANTHROPIC_API_KEY else '(not set)'}
-  {Colors.CYAN}[4]{Colors.RESET} {status_indicator(bool(XAI_API_KEY))}  xAI API:       {XAI_MODEL if XAI_API_KEY else '(not set)'}
-  {Colors.CYAN}[5]{Colors.RESET} {status_indicator(bool(MINIMAX_API_KEY))}  MiniMax API:   {MINIMAX_MODEL if MINIMAX_API_KEY else '(not set)'}
-{separator(60)}
-
-Edit the {Colors.CYAN}.env{Colors.RESET} file to configure API keys.
-    """)
-    input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+    print_panel("SETTINGS")
+    print_api_keys()
+    pause()
 
 def module_tools():
     """General utility tools - called from tools_submenu"""
-    print(box_title("GENERAL UTILITY TOOLS"))
+    print_panel("GENERAL UTILITY TOOLS")
     
-    print(f"""
-{Colors.BOLD}Available Tools:{Colors.RESET}
-{menu_option('1', 'Hash Generator', 'Generate hashes from text')}
-{menu_option('2', 'Base64 Encoder/Decoder', 'Encode or decode Base64')}
-{menu_option('3', 'URL Encoder', 'URL encode/decode strings')}
-{menu_option('4', 'Password Generator', 'Generate secure passwords')}
-{separator(60)}
-    """)
-    choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip()
+    items = [
+        ("1", "Hash Generator", "Generate hashes from text"),
+        ("2", "Base64 Encoder/Decoder", "Encode or decode Base64"),
+        ("3", "URL Encoder", "URL encode/decode strings"),
+        ("4", "Password Generator", "Generate secure passwords"),
+    ]
+    print_submenu("Available Tools", items, back=False)
+    
+    choice = get_input("Select")
     
     if choice == "1":
         module_hash_tools()
@@ -718,12 +922,15 @@ def module_tools():
         length = 16
         chars = string.ascii_letters + string.digits
         password = ''.join(secrets.choice(chars) for _ in range(length))
-        print(f"\n{Colors.BOLD}Generated Password:{Colors.RESET}")
-        print(f"  {Colors.GREEN}{password}{Colors.RESET}")
+        print_panel("Generated Password")
+        if RICH_AVAILABLE:
+            console.print(f"[bold green]{password}[/bold green]")
+        else:
+            print(f"  {Colors.GREEN}{password}{Colors.RESET}")
     else:
-        print(f"\n{Colors.RED}Invalid selection{Colors.RESET}")
+        print_error("Invalid selection")
     
-    input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+    pause()
 
 # ============================================================
 # MAIN
@@ -731,8 +938,15 @@ def module_tools():
 
 def main():
     while True:
-        print(CERBERUS_ART)
-        choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
+        # Use Rich UI if available
+        if RICH_AVAILABLE:
+            console.clear()
+            print_header()
+            print_main_menu()
+        else:
+            print(CERBERUS_ART)
+        
+        choice = get_input("Select").lower()
         
         if choice == "1":
             osint_submenu()
@@ -743,49 +957,74 @@ def main():
         elif choice == "4":
             module_settings()
         elif choice == "5":
-            print(f"\n{Colors.CYAN}🔄 Use: python3 auto_update.py --scan{Colors.RESET}")
-            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+            print_info("Use: python3 auto_update.py --scan")
+            pause()
         elif choice == "q":
-            print(f"\n{Colors.GREEN}{separator(50, '═')}{Colors.RESET}")
-            print(f"{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
-            print(f"{Colors.GREEN}{separator(50, '═')}{Colors.RESET}")
+            if RICH_AVAILABLE:
+                console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
+            else:
+                print(f"\n{Colors.GREEN}{separator(50, '═')}{Colors.RESET}")
+                print(f"{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
+                print(f"{Colors.GREEN}{separator(50, '═')}{Colors.RESET}")
             break
         else:
-            print(f"\n{Colors.RED}⚠️ Invalid selection. Please try again.{Colors.RESET}")
+            print_error("Invalid selection. Please try again.")
 
 
 def osint_submenu():
     """OSINT & Intelligence submenu"""
     while True:
-        print(OSINT_MENU)
-        choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
+        items = [
+            ("1", "Threat Intelligence", "Domain/IP Research"),
+            ("2", "Vulnerabilities DB", "Known LLM Vulnerabilities"),
+            ("3", "Vulnerability Scanner", "Security Assessment"),
+            ("4", "News & Feeds", "Latest Threat Intelligence"),
+        ]
+        print_submenu("OSINT & INTELLIGENCE", items)
+        
+        choice = get_input("Select").lower()
         
         if choice == "1":
             module_osint()
         elif choice == "2":
-            print(box_title("VULNERABILITIES DATABASE"))
+            print_panel("VULNERABILITIES DATABASE")
             show_vulnerabilities()
-            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+            pause()
         elif choice == "3":
-            print(f"\n{Colors.YELLOW}⚠️ Vulnerability Scanner - Coming Soon{Colors.RESET}")
-            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+            print_warning("Vulnerability Scanner - Coming Soon")
+            pause()
         elif choice == "4":
-            fetch_cybersecurity_news()
-            input(f"\n{Colors.GRAY}Press Enter to continue...{Colors.RESET}")
+            news = fetch_cybersecurity_news()
+            print_panel("LATEST NEWS")
+            for item in news:
+                if RICH_AVAILABLE:
+                    console.print(item)
+                else:
+                    print(item)
+            pause()
         elif choice == "b":
             break
         elif choice == "q":
-            print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
+            if RICH_AVAILABLE:
+                console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
+            else:
+                print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}\n")
             sys.exit(0)
         else:
-            print(f"\n{Colors.RED}⚠️ Invalid selection{Colors.RESET}")
+            print_error("Invalid selection")
 
 
 def redteam_submenu():
     """Red Team submenu"""
     while True:
-        print(REDTEAM_MENU)
-        choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
+        items = [
+            ("1", "LLM Vulnerability Test", "Test Models for Bypasses"),
+            ("2", "Payload Generator", "Create Custom Payloads"),
+            ("3", "Advanced Attacks", "Premium Bypass Techniques"),
+        ]
+        print_submenu("RED TEAM MODULE", items)
+        
+        choice = get_input("Select").lower()
         
         if choice == "1":
             module_redteam()
@@ -796,17 +1035,26 @@ def redteam_submenu():
         elif choice == "b":
             break
         elif choice == "q":
-            print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
+            if RICH_AVAILABLE:
+                console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
+            else:
+                print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}\n")
             sys.exit(0)
         else:
-            print(f"\n{Colors.RED}⚠️ Invalid selection{Colors.RESET}")
+            print_error("Invalid selection")
 
 
 def tools_submenu():
     """Tools submenu"""
     while True:
-        print(TOOLS_MENU)
-        choice = input(f"{Colors.CYAN}Select > {Colors.RESET}").strip().lower()
+        items = [
+            ("1", "Hash Tools", "Generate & Verify Hashes"),
+            ("2", "Encoder/Decoder", "Encode/Decode Utilities"),
+            ("3", "General Tools", "Additional Utilities"),
+        ]
+        print_submenu("UTILITY TOOLS", items)
+        
+        choice = get_input("Select").lower()
         
         if choice == "1":
             module_hash_tools()
@@ -817,10 +1065,13 @@ def tools_submenu():
         elif choice == "b":
             break
         elif choice == "q":
-            print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}")
+            if RICH_AVAILABLE:
+                console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
+            else:
+                print(f"\n{Colors.GREEN}🔒 Cerberus v1.0.0 - Stay Secure{Colors.RESET}\n")
             sys.exit(0)
         else:
-            print(f"\n{Colors.RED}⚠️ Invalid selection{Colors.RESET}")
+            print_error("Invalid selection")
 
 # ============================================================
 # ADVANCED ATTACKS MODULE (PREMIUM)
