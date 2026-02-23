@@ -1,0 +1,197 @@
+{
+  "tools": {
+    "available": [
+      {
+        "name": "objdump",
+        "desc": "Disassembler",
+        "category": "re",
+        "installed": true
+      }
+    ],
+    "all_tools": [
+      {
+        "name": "nmap",
+        "desc": "Network scanner",
+        "category": "recon",
+        "installed": false
+      },
+      {
+        "name": "masscan",
+        "desc": "Fast TCP scanner",
+        "category": "recon",
+        "installed": false
+      },
+      {
+        "name": "netdiscover",
+        "desc": "ARP scanner",
+        "category": "recon",
+        "installed": false
+      },
+      {
+        "name": " Recon-ng",
+        "desc": "Web reconnaissance",
+        "category": "recon",
+        "installed": false
+      },
+      {
+        "name": "theHarvester",
+        "desc": "Email/subdomain harvester",
+        "category": "recon",
+        "installed": false
+      },
+      {
+        "name": "nikto",
+        "desc": "Web server scanner",
+        "category": "vuln",
+        "installed": false
+      },
+      {
+        "name": "nmap scripts",
+        "desc": "NSE scripts",
+        "category": "vuln",
+        "installed": false
+      },
+      {
+        "name": "openvas",
+        "desc": "Vulnerability scanner",
+        "category": "vuln",
+        "installed": false
+      },
+      {
+        "name": "nessus",
+        "desc": "Commercial scanner",
+        "category": "vuln",
+        "installed": false
+      },
+      {
+        "name": "metasploit",
+        "desc": "Exploitation framework",
+        "category": "exploit",
+        "installed": false
+      },
+      {
+        "name": "searchsploit",
+        "desc": "Exploit database",
+        "category": "exploit",
+        "installed": false
+      },
+      {
+        "name": "sqlmap",
+        "desc": "SQL injection tool",
+        "category": "exploit",
+        "installed": false
+      },
+      {
+        "name": "hydra",
+        "desc": "Password brute force",
+        "category": "exploit",
+        "installed": false
+      },
+      {
+        "name": "aircrack-ng",
+        "desc": "WiFi cracker",
+        "category": "wireless",
+        "installed": false
+      },
+      {
+        "name": "reaver",
+        "desc": "WPS cracker",
+        "category": "wireless",
+        "installed": false
+      },
+      {
+        "name": "wifite",
+        "desc": "Wireless auditor",
+        "category": "wireless",
+        "installed": false
+      },
+      {
+        "name": "john",
+        "desc": "John the Ripper",
+        "category": "password",
+        "installed": false
+      },
+      {
+        "name": "hashcat",
+        "desc": "GPU password cracker",
+        "category": "password",
+        "installed": false
+      },
+      {
+        "name": "cewl",
+        "desc": "Wordlist generator",
+        "category": "password",
+        "installed": false
+      },
+      {
+        "name": "crunch",
+        "desc": "Wordlist generator",
+        "category": "password",
+        "installed": false
+      },
+      {
+        "name": "ghidra",
+        "desc": "SRE framework",
+        "category": "re",
+        "installed": false
+      },
+      {
+        "name": "radare2",
+        "desc": "Binary analysis",
+        "category": "re",
+        "installed": false
+      },
+      {
+        "name": "objdump",
+        "desc": "Disassembler",
+        "category": "re",
+        "installed": true
+      },
+      {
+        "name": "burpSuite",
+        "desc": "Web proxy",
+        "category": "web",
+        "installed": false
+      },
+      {
+        "name": "zap",
+        "desc": "OWASP ZAP",
+        "category": "web",
+        "installed": false
+      },
+      {
+        "name": "dirb",
+        "desc": "Directory scanner",
+        "category": "web",
+        "installed": false
+      },
+      {
+        "name": "gobuster",
+        "desc": "Directory/Subdomain",
+        "category": "web",
+        "installed": false
+      },
+      {
+        "name": "autopsy",
+        "desc": " forensics",
+        "category": "forensics",
+        "installed": false
+      },
+      {
+        "name": "volatility",
+        "desc": "Memory forensics",
+        "category": "forensics",
+        "installed": false
+      },
+      {
+        "name": "binwalk",
+        "desc": "Binary analysis",
+        "category": "forensics",
+        "installed": false
+      }
+    ],
+    "total_available": 1,
+    "total_tools": 30
+  },
+  "last_updated": "2026-02-23T03:10:13.861205"
+}

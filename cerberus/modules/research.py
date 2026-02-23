@@ -1,175 +1,381 @@
 #!/usr/bin/env python3
 """
-Cerberus Security Tools Research Module
-Researches and integrates new pentesting/Kali Linux tools
+Cerberus Security Tools Research Module - CROSS-PLATFORM
+Works via CLI on any platform (Linux, macOS, Windows)
 """
 
 import os
+import sys
 import json
 import subprocess
-import requests
+import argparse
 from datetime import datetime
 from pathlib import Path
 
 # Base paths
-BASE_DIR = Path(__file__).parent.parent
-RESEARCH_DIR = BASE_DIR / "research_data"
-TOOLS_DB = RESEARCH_DIR / "tools.json"
+BASE_DIR = Path(__file__).parent.parent.parent
+DATA_DIR = BASE_DIR / "data"
+TOOLS_DB = DATA_DIR / "security_tools.json"
+
+# Cross-platform security tools database
+SECURITY_TOOLS = {
+    "Information Gathering": {
+        "nmap": {
+            "desc": "Network scanner - discovers hosts/services",
+            "install": "apt install nmap / brew install nmap / choco install nmap",
+            "usage": "nmap -sV -sC target.com",
+            "category": "recon"
+        },
+        "masscan": {
+            "desc": "Fast TCP port scanner",
+            "install": "apt install masscan / brew install masscan",
+            "usage": "masscan -p1-65535 target.com --rate=10000",
+            "category": "recon"
+        },
+        "netdiscover": {
+            "desc": "ARP-based network discovery",
+            "install": "apt install netdiscover",
+            "usage": "netdiscover -r 192.168.1.0/24",
+            "category": "recon"
+        },
+        "theHarvester": {
+            "desc": "Email/subdomain harvester",
+            "install": "pip install theHarvester",
+            "usage": "theHarvester -d target.com -b all",
+            "category": "recon"
+        },
+        "subfinder": {
+            "desc": "Passive subdomain enumeration",
+            "install": "go install -v github.com/projectdiscovery/subfinder/v2/...@latest",
+            "usage": "subfinder -d target.com",
+            "category": "recon"
+        },
+        "amass": {
+            "desc": "Network mapping of attack surfaces",
+            "install": "go install -v github.com/OWASP/Amass/v3/...@latest",
+            "usage": "amass enum -d target.com",
+            "category": "recon"
+        },
+    },
+    "Vulnerability Analysis": {
+        "nikto": {
+            "desc": "Web server vulnerability scanner",
+            "install": "apt install nikto / brew install nikto",
+            "usage": "nikto -h target.com",
+            "category": "vuln"
+        },
+        "nuclei": {
+            "desc": "Template-based vulnerability scanner",
+            "install": "go install -v github.com/projectdiscovery/nuclei/v3/...@latest",
+            "usage": "nuclei -u target.com",
+            "category": "vuln"
+        },
+        "openvas": {
+            "desc": "Full vulnerability scanner",
+            "install": "apt install openvas",
+            "usage": "openvas-start",
+            "category": "vuln"
+        },
+    },
+    "Exploitation": {
+        "metasploit": {
+            "desc": "Exploitation framework",
+            "install": "apt install metasploit-framework / brew install metasploit",
+            "usage": "msfconsole",
+            "category": "exploit"
+        },
+        "sqlmap": {
+            "desc": "SQL injection automation",
+            "install": "apt install sqlmap / pip install sqlmap",
+            "usage": "sqlmap -u target.com vuln param",
+            "category": "exploit"
+        },
+        "searchsploit": {
+            "desc": "Exploit-DB search tool",
+            "install": "apt install exploitdb / brew install exploitdb",
+            "usage": "searchsploit apache 2.4",
+            "category": "exploit"
+        },
+        "hydra": {
+            "desc": "Password brute-forcing tool",
+            "install": "apt install hydra / brew install hydra",
+            "usage": "hydra -L users.txt -P passwords.txt target.com ssh",
+            "category": "exploit"
+        },
+    },
+    "Wireless": {
+        "aircrack-ng": {
+            "desc": "WiFi security auditing",
+            "install": "apt install aircrack-ng",
+            "usage": "aircrack-ng capture.cap",
+            "category": "wireless"
+        },
+        "wifite": {
+            "desc": "Automated wireless auditor",
+            "install": "apt install wifite / pip install wifite2",
+            "usage": "wifite",
+            "category": "wireless"
+        },
+    },
+    "Password Attacks": {
+        "hashcat": {
+            "desc": "Fast password recovery",
+            "install": "apt install hashcat / brew install hashcat",
+            "usage": "hashcat -m 0 hashes.txt wordlist.txt",
+            "category": "password"
+        },
+        "john": {
+            "desc": "John the Ripper",
+            "install": "apt install john / brew install john",
+            "usage": "john hash.txt",
+            "category": "password"
+        },
+        "cewl": {
+            "desc": "Custom wordlist generator",
+            "install": "apt install cewl / brew install cewl",
+            "usage": "cewl target.com -m 6 -w wordlist.txt",
+            "category": "password"
+        },
+    },
+    "Web Applications": {
+        "burpsuite": {
+            "desc": "Web application security testing",
+            "install": "Download from https://portswigger.net/burp",
+            "usage": "java -jar burpsuite.jar",
+            "category": "web"
+        },
+        "zap": {
+            "desc": "OWASP ZAP proxy",
+            "install": "apt install zaproxy / brew install owasp-zap",
+            "usage": "zap.sh",
+            "category": "web"
+        },
+        "gobuster": {
+            "desc": "Directory/Subdomain fuzzing",
+            "install": "go install github.com/OJ/gobuster/v3@latest",
+            "usage": "gobuster dir -u target.com -w wordlist.txt",
+            "category": "web"
+        },
+        "dirb": {
+            "desc": "Web content scanner",
+            "install": "apt install dirb",
+            "usage": "dirb target.com",
+            "category": "web"
+        },
+    },
+    "Reverse Engineering": {
+        "ghidra": {
+            "desc": "Software reverse engineering",
+            "install": "Download from https://ghidra-sre.org/",
+            "usage": "ghidraRun",
+            "category": "re"
+        },
+        "radare2": {
+            "desc": "Command-line reverse engineering",
+            "install": "apt install radare2 / brew install radare2",
+            "usage": "r2 binary",
+            "category": "re"
+        },
+        "objdump": {
+            "desc": "Disassembler (part of binutils)",
+            "install": "apt install binutils / brew install binutils",
+            "usage": "objdump -d binary",
+            "category": "re"
+        },
+    },
+    "Forensics": {
+        "autopsy": {
+            "desc": "Digital forensics platform",
+            "install": "apt install autopsy",
+            "usage": "autopsy",
+            "category": "forensics"
+        },
+        "volatility": {
+            "desc": "Memory forensics framework",
+            "install": "pip install volatility3",
+            "usage": "volatility -f memdump.raw",
+            "category": "forensics"
+        },
+        "binwalk": {
+            "desc": "Binary analysis tool",
+            "install": "apt install binwalk / pip install binwalk",
+            "usage": "binwalk firmware.bin",
+            "category": "forensics"
+        },
+    },
+    "LLM Security": {
+        "burp-suite": {
+            "desc": "Web proxy for testing LLM apps",
+            "install": "Download from PortSwigger",
+            "usage": "Intercept and analyze LLM API calls",
+            "category": "llm"
+        },
+        "payloads": {
+            "desc": "LLM jailbreak payloads collection",
+            "install": "git clone https://github.com/GeorgioMaia/llm-payloads",
+            "usage": "Use for red teaming LLM applications",
+            "category": "llm"
+        },
+    },
+}
+
 
 class SecurityToolsResearcher:
-    """Research new security tools and update Cerberus"""
+    """Cross-platform security tools research module"""
     
     def __init__(self):
-        RESEARCH_DIR.mkdir(exist_ok=True)
-        self.tools = self._load_tools()
+        DATA_DIR.mkdir(exist_ok=True)
+        self.tools = self._load_database()
     
-    def _load_tools(self):
-        """Load existing tools database"""
+    def _load_database(self):
+        """Load tools database"""
         if TOOLS_DB.exists():
             with open(TOOLS_DB, 'r') as f:
                 return json.load(f)
-        return {"tools": [], "last_updated": None}
+        return {"tools": SECURITY_TOOLS, "last_updated": None}
     
-    def _save_tools(self):
+    def _save_database(self):
         """Save tools database"""
-        self.tools["last_updated"] = datetime.now().isoformat()
+        self._save({"tools": SECURITY_TOOLS, "last_updated": datetime.now().isoformat()})
+    
+    def _save(self, data):
+        """Save to JSON file"""
         with open(TOOLS_DB, 'w') as f:
-            json.dump(self.tools, f, indent=2)
+            json.dump(data, f, indent=2)
     
-    def get_kali_tools(self):
-        """Get list of Kali Linux tools"""
-        # Common Kali Linux tools by category
-       kali_tools = {
-            "Information Gathering": [
-                {"name": "nmap", "desc": "Network scanner", "category": "recon"},
-                {"name": "masscan", "desc": "Fast TCP scanner", "category": "recon"},
-                {"name": "netdiscover", "desc": "ARP scanner", "category": "recon"},
-                {"name": " Recon-ng", "desc": "Web reconnaissance", "category": "recon"},
-                {"name": "theHarvester", "desc": "Email/subdomain harvester", "category": "recon"},
-            ],
-            "Vulnerability Analysis": [
-                {"name": "nikto", "desc": "Web server scanner", "category": "vuln"},
-                {"name": "nmap scripts", "desc": "NSE scripts", "category": "vuln"},
-                {"name": "openvas", "desc": "Vulnerability scanner", "category": "vuln"},
-                {"name": "nessus", "desc": "Commercial scanner", "category": "vuln"},
-            ],
-            "Exploitation Tools": [
-                {"name": "metasploit", "desc": "Exploitation framework", "category": "exploit"},
-                {"name": "searchsploit", "desc": "Exploit database", "category": "exploit"},
-                {"name": "sqlmap", "desc": "SQL injection tool", "category": "exploit"},
-                {"name": "hydra", "desc": "Password brute force", "category": "exploit"},
-            ],
-            "Wireless Attacks": [
-                {"name": "aircrack-ng", "desc": "WiFi cracker", "category": "wireless"},
-                {"name": "reaver", "desc": "WPS cracker", "category": "wireless"},
-                {"name": "wifite", "desc": "Wireless auditor", "category": "wireless"},
-            ],
-            "Password Attacks": [
-                {"name": "john", "desc": "John the Ripper", "category": "password"},
-                {"name": "hashcat", "desc": "GPU password cracker", "category": "password"},
-                {"name": "cewl", "desc": "Wordlist generator", "category": "password"},
-                {"name": "crunch", "desc": "Wordlist generator", "category": "password"},
-            ],
-            "Reverse Engineering": [
-                {"name": "ghidra", "desc": "SRE framework", "category": "re"},
-                {"name": "radare2", "desc": "Binary analysis", "category": "re"},
-                {"name": "objdump", "desc": "Disassembler", "category": "re"},
-            ],
-            "Web Applications": [
-                {"name": "burpSuite", "desc": "Web proxy", "category": "web"},
-                {"name": "zap", "desc": "OWASP ZAP", "category": "web"},
-                {"name": "dirb", "desc": "Directory scanner", "category": "web"},
-                {"name": "gobuster", "desc": "Directory/Subdomain", "category": "web"},
-            ],
-            "Forensics": [
-                {"name": "autopsy", "desc": " forensics", "category": "forensics"},
-                {"name": "volatility", "desc": "Memory forensics", "category": "forensics"},
-                {"name": "binwalk", "desc": "Binary analysis", "category": "forensics"},
-            ],
-        }
-        return kali_tools
+    def check_tool(self, tool_name):
+        """Check if a tool is installed (cross-platform)"""
+        # Try 'which' on Unix, 'where' on Windows
+        try:
+            result = subprocess.run(
+                ["which", tool_name] if os.name != 'nt' else ["where", tool_name],
+                capture_output=True,
+                text=True
+            )
+            return result.returncode == 0
+        except:
+            return False
     
-    def check_tool_installed(self, tool_name):
-        """Check if a tool is installed"""
-        result = subprocess.run(
-            ["which", tool_name.strip()],
-            capture_output=True,
-            text=True
-        )
-        return result.returncode == 0
-    
-    def scan_local_tools(self):
-        """Scan for available security tools on system"""
+    def scan(self):
+        """Scan for available tools"""
         available = []
-        all_tools = []
+        unavailable = []
         
-        for category, tools in self.get_kali_tools().items():
-            for tool in tools:
-                all_tools.append(tool)
-                if self.check_tool_installed(tool["name"]):
-                    tool["installed"] = True
-                    available.append(tool)
+        for category, tools in SECURITY_TOOLS.items():
+            for name, info in tools.items():
+                status = self.check_tool(name)
+                entry = {"name": name, "desc": info["desc"], "category": category, "installed": status}
+                if status:
+                    available.append(entry)
                 else:
-                    tool["installed"] = False
+                    unavailable.append(entry)
         
         return {
             "available": available,
-            "all_tools": all_tools,
+            "unavailable": unavailable,
             "total_available": len(available),
-            "total_tools": len(all_tools)
+            "total_tools": sum(len(tools) for tools in SECURITY_TOOLS.values())
         }
     
-    def generate_tool_integration(self):
-        """Generate tool integration code for Cerberus"""
-        tools = self.scan_local_tools()
+    def list_tools(self, category=None, available_only=False):
+        """List tools, optionally filtered by category"""
+        results = []
         
-        # Generate module code
-        module_code = '''"""
-Auto-generated security tools integration
-Generated: {timestamp}
-"""
-from .connectors import BaseConnector
-
-TOOLS_AVAILABLE = {tools}
-
-TOOL_COMMANDS = {commands}
-'''.format(
-            timestamp=datetime.now().isoformat(),
-            tools=json.dumps([t["name"] for t in tools["available"]], indent=4),
-            commands=json.dumps({t["name"]: t.get("desc", "") for t in tools["all_tools"]}, indent=4)
-        )
+        for cat, tools in SECURITY_TOOLS.items():
+            if category and cat.lower() != category.lower():
+                continue
+            
+            for name, info in tools.items():
+                is_installed = self.check_tool(name)
+                
+                if available_only and not is_installed:
+                    continue
+                
+                results.append({
+                    "name": name,
+                    "category": cat,
+                    "desc": info["desc"],
+                    "install": info["install"],
+                    "usage": info["usage"],
+                    "installed": is_installed
+                })
         
-        return module_code
+        return results
+    
+    def get_tool_info(self, tool_name):
+        """Get info about a specific tool"""
+        for category, tools in SECURITY_TOOLS.items():
+            if tool_name in tools:
+                info = tools[tool_name]
+                info["category"] = category
+                info["installed"] = self.check_tool(tool_name)
+                return info
+        return None
     
     def run_research(self):
-        """Run full research cycle"""
+        """Run research cycle"""
         print("=== Cerberus Security Tools Research ===")
         print(f"Time: {datetime.now().isoformat()}\n")
         
-        # Scan local tools
-        tools = self.scan_local_tools()
-        print(f"Found {tools['total_available']}/{tools['total_tools']} tools installed")
+        scan_results = self.scan()
         
-        # Update database
-        self.tools["tools"] = tools
-        self._save_tools()
+        print(f"Tools Database: {scan_results['total_tools']} tools")
+        print(f"Installed: {scan_results['total_available']} / {scan_results['total_tools']}")
         
-        print("\nAvailable tools:")
-        for tool in tools["available"]:
-            print(f"  ✓ {tool['name']} - {tool['desc']}")
+        # Save results
+        self._save({
+            "tools": SECURITY_TOOLS,
+            "last_updated": datetime.now().isoformat(),
+            "scan_results": scan_results
+        })
         
-        print("\nMissing tools:")
-        missing = [t for t in tools["all_tools"] if not t.get("installed")]
-        for tool in missing[:10]:  # Show first 10
-            print(f"  ✗ {tool['name']}")
+        print("\n=== Installed Tools ===")
+        for tool in scan_results["available"]:
+            print(f"  ✓ {tool['name']} ({tool['category']})")
         
-        print(f"\n=== Research Complete ===")
-        return tools
+        print("\n=== Research Complete ===")
+        return scan_results
+
 
 def main():
-    """Main entry point"""
+    """CLI Entry Point"""
+    parser = argparse.ArgumentParser(description="Cerberus Security Tools Research")
+    parser.add_argument("--scan", action="store_true", help="Scan for installed tools")
+    parser.add_argument("--list", action="store_true", help="List all tools")
+    parser.add_argument("--category", type=str, help="Filter by category")
+    parser.add_argument("--installed", action="store_true", help="Show only installed tools")
+    parser.add_argument("--info", type=str, help="Get info on specific tool")
+    parser.add_argument("--update", action="store_true", help="Update tools database")
+    
+    args = parser.parse_args()
+    
     researcher = SecurityToolsResearcher()
-    researcher.run_research()
+    
+    if args.scan:
+        researcher.run_research()
+    elif args.list:
+        tools = researcher.list_tools(category=args.category, available_only=args.installed)
+        for tool in tools:
+            status = "✓" if tool["installed"] else "✗"
+            print(f"[{status}] {tool['name']} - {tool['desc']} ({tool['category']})")
+    elif args.info:
+        info = researcher.get_tool_info(args.info)
+        if info:
+            print(f"\n=== {args.info} ===")
+            print(f"Description: {info['desc']}")
+            print(f"Category: {info['category']}")
+            print(f"Installed: {'Yes' if info['installed'] else 'No'}")
+            print(f"Install: {info['install']}")
+            print(f"Usage: {info['usage']}")
+        else:
+            print(f"Tool '{args.info}' not found in database")
+    elif args.update:
+        researcher._save_database()
+        print("Tools database updated!")
+    else:
+        # Default: show summary
+        researcher.run_research()
+
 
 if __name__ == "__main__":
     main()

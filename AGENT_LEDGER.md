@@ -5,6 +5,40 @@
 
 ---
 
+## [2026-02-23 03:15] - Make Research Module Cross-Platform
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Rewritten:** `cerberus/modules/research.py` - Now works cross-platform via CLI
+* **Removed:** Dependency on locally installed Kali tools
+* **Added:** Full tool database with install/usage instructions
+
+### 2. CLI Usage
+```bash
+# List all tools
+python3 -m cerberus.modules.research --list
+
+# Filter by category
+python3 -m cerberus.modules.research --list --category "Information Gathering"
+
+# Show only installed
+python3 -m cerberus.modules.research --list --installed
+
+# Get tool info
+python3 -m cerberus.modules.research --info nmap
+
+# Full scan
+python3 -m cerberus.modules.research --scan
+```
+
+### 3. Cross-Platform Design
+* Works on Linux, macOS, Windows
+* Provides install instructions for each tool
+* Shows usage examples
+* No dependency on tools being installed locally
+
+---
+
 ## [2026-02-23 01:08] - Add Research Module & Cron Job
 **Task ID / PR Reference:** N/A
 
