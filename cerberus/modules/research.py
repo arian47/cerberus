@@ -19,6 +19,7 @@ TOOLS_DB = DATA_DIR / "security_tools.json"
 
 # Cross-platform security tools database
 SECURITY_TOOLS = {
+    # === EXISTING CATEGORIES ===
     "Information Gathering": {
         "nmap": {
             "desc": "Network scanner - discovers hosts/services",
@@ -54,6 +55,18 @@ SECURITY_TOOLS = {
             "desc": "Network mapping of attack surfaces",
             "install": "go install -v github.com/OWASP/Amass/v3/...@latest",
             "usage": "amass enum -d target.com",
+            "category": "recon"
+        },
+        "knock": {
+            "desc": "Port knock scanner",
+            "install": "apt install knock",
+            "usage": "knock target.com 1000 2000 3000",
+            "category": "recon"
+        },
+        "zenmap": {
+            "desc": "Nmap GUI",
+            "install": "apt install zenmap",
+            "usage": "zenmap target.com",
             "category": "recon"
         },
     },
@@ -215,6 +228,277 @@ SECURITY_TOOLS = {
             "install": "git clone https://github.com/GeorgioMaia/llm-payloads",
             "usage": "Use for red teaming LLM applications",
             "category": "llm"
+        },
+    },
+    # === NEW CATEGORIES ===
+    "Cloud Security": {
+        "awscli": {
+            "desc": "AWS command line interface",
+            "install": "pip install awscli",
+            "usage": "aws s3 ls / aws ec2 describe-instances",
+            "category": "cloud"
+        },
+        "azure-cli": {
+            "desc": "Microsoft Azure CLI",
+            "install": "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash",
+            "usage": "az vm list",
+            "category": "cloud"
+        },
+        "gcloud": {
+            "desc": "Google Cloud CLI",
+            "install": "curl https://sdk.cloud.google.com | bash",
+            "usage": "gcloud compute instances list",
+            "category": "cloud"
+        },
+        "cloudmapper": {
+            "desc": "AWS security visualization",
+            "install": "pip install cloudmapper",
+            "usage": "cloudmapper.py report --account myaccount",
+            "category": "cloud"
+        },
+        "prowler": {
+            "desc": "AWS security assessment",
+            "install": "pip install prowler",
+            "usage": "prowler aws",
+            "category": "cloud"
+        },
+        "cloudfrunt": {
+            "desc": "Find domain variants for cloud services",
+            "install": "git clone https://github.com/dustinmiano/cloudfrunt",
+            "usage": "python3 cloudfrunt.py -d example.com",
+            "category": "cloud"
+        },
+    },
+    "Mobile Security": {
+        "adb": {
+            "desc": "Android Debug Bridge",
+            "install": "apt install adb / brew install adb",
+            "usage": "adb devices / adb shell",
+            "category": "mobile"
+        },
+        "apktool": {
+            "desc": "Android APK decompiler",
+            "install": "apt install apktool / brew install apktool",
+            "usage": "apktool d app.apk",
+            "category": "mobile"
+        },
+        "jadx": {
+            "desc": "Dex to Java decompiler",
+            "install": "Download from jadx.github.io",
+            "usage": "jadx app.apk",
+            "category": "mobile"
+        },
+        "drozer": {
+            "desc": "Android security assessment",
+            "install": "pip install drozer",
+            "usage": "drozer console connect",
+            "category": "mobile"
+        },
+        "frida": {
+            "desc": "Dynamic instrumentation toolkit",
+            "install": "pip install frida-tools",
+            "usage": "frida -U -f com.app",
+            "category": "mobile"
+        },
+    },
+    "API Security": {
+        "Postman": {
+            "desc": "API testing platform",
+            "install": "Download from postman.com",
+            "usage": "GUI for API testing",
+            "category": "api"
+        },
+        "insomnia": {
+            "desc": "API design platform",
+            "install": "apt install insomnia / brew install insomnia",
+            "usage": "insomnia",
+            "category": "api"
+        },
+        "swagger": {
+            "desc": "API documentation tool",
+            "install": "npm install -g swagger",
+            "usage": "swagger project create",
+            "category": "api"
+        },
+        "restler": {
+            "desc": "REST API fuzzer",
+            "install": "git clone Microsoft/restler-fuzzer",
+            "usage": "python restler.py",
+            "category": "api"
+        },
+    },
+    "Social Engineering": {
+        "setoolkit": {
+            "desc": "Social-Engineer Toolkit",
+            "install": "apt install set",
+            "usage": "setoolkit",
+            "category": "social"
+        },
+        "king-phisher": {
+            "desc": "Phishing campaign tool",
+            "install": "apt install king-phisher",
+            "usage": "king-phisher",
+            "category": "social"
+        },
+        "gophish": {
+            "desc": "Open-source phishing framework",
+            "install": "Download from getgophish.com",
+            "usage": "./gophish",
+            "category": "social"
+        },
+        "evilginx2": {
+            "desc": "Man-in-the-middle proxy",
+            "install": "go get -u github.com/kgretzky/evilginx2",
+            "usage": "evilginx -p /path/to/phishlets",
+            "category": "social"
+        },
+    },
+    "Sniffing & Spoofing": {
+        "wireshark": {
+            "desc": "Network protocol analyzer",
+            "install": "apt install wireshark / brew install wireshark",
+            "usage": "wireshark",
+            "category": "sniff"
+        },
+        "tcpdump": {
+            "desc": "Command-line packet analyzer",
+            "install": "apt install tcpdump / brew install tcpdump",
+            "usage": "tcpdump -i eth0",
+            "category": "sniff"
+        },
+        "ettercap": {
+            "desc": "Man-in-the-middle tool",
+            "install": "apt install ettercap-graphical",
+            "usage": "ettercap -G",
+            "category": "sniff"
+        },
+        "bettercap": {
+            "desc": "Swiss army knife for network",
+            "install": "go get -u github.com/bettercap/bettercap",
+            "usage": "bettercap -X",
+            "category": "sniff"
+        },
+        "dsniff": {
+            "desc": "Network sniffing tools",
+            "install": "apt install dsniff",
+            "usage": "dsniff -i eth0",
+            "category": "sniff"
+        },
+    },
+    "Privilege Escalation": {
+        "linpeas": {
+            "desc": "Linux privilege escalation checker",
+            "install": "curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh",
+            "usage": "curl -L https://github.com/carlospolop/PEASS-ng/... | sh",
+            "category": "privesc"
+        },
+        "linenum": {
+            "desc": "Linux local enumeration",
+            "install": "git clone https://github.com/rebootuser/LinEnum",
+            "usage": "./LinEnum.sh",
+            "category": "privesc"
+        },
+        "linux-exploit-suggester": {
+            "desc": "Find Linux exploits",
+            "install": "git clone https://github.com/mzet-/linux-exploit-suggester",
+            "usage": "./linux-exploit-suggester.pl",
+            "category": "privesc"
+        },
+        "winpeas": {
+            "desc": "Windows privilege escalation",
+            "install": "Download from github.com/carlospolop/PEASS-ng",
+            "usage": "winpeas.exe",
+            "category": "privesc"
+        },
+        "powerup": {
+            "desc": "Windows privilege escalation",
+            "install": "git clone https://github.com/PowerShellMafia/PowerSploit",
+            "usage": "powershell -ExecutionPolicy Bypass -File powerup.ps1",
+            "category": "privesc"
+        },
+    },
+    "Post Exploitation": {
+        "mimikatz": {
+            "desc": "Windows credential extractor",
+            "install": "Download from github.com/gentilkiwi/mimikatz",
+            "usage": "mimikatz.exe",
+            "category": "postex"
+        },
+        "laZagne": {
+            "desc": "Password recovery tool",
+            "install": "pip install laZagne",
+            "usage": "laZagne.py all",
+            "category": "postex"
+        },
+        "pwdump": {
+            "desc": "Windows password dumper",
+            "install": "Download from foo.com/pwdump",
+            "usage": "pwdump.exe",
+            "category": "postex"
+        },
+        "fgdump": {
+            "desc": "Password cache dumper",
+            "install": "apt install fgdump",
+            "usage": "fgdump.exe",
+            "category": "postex"
+        },
+    },
+    "DNS Tools": {
+        "dnsenum": {
+            "desc": "DNS enumeration",
+            "install": "apt install dnsenum",
+            "usage": "dnsenum target.com",
+            "category": "dns"
+        },
+        "dnsmap": {
+            "desc": "DNS mapping",
+            "install": "apt install dnsmap",
+            "usage": "dnsmap target.com",
+            "category": "dns"
+        },
+        "fierce": {
+            "desc": "DNS scanner",
+            "install": "pip install fierce",
+            "usage": "fierce --domain target.com",
+            "category": "dns"
+        },
+        "dnschef": {
+            "desc": "DNS proxy",
+            "install": "pip install dnschef",
+            "usage": "dnschef.py",
+            "category": "dns"
+        },
+        "dnstwist": {
+            "desc": "Domain permutation",
+            "install": "pip install dnstwist",
+            "usage": "dnstwist example.com",
+            "category": "dns"
+        },
+    },
+    "SSL/TLS Analysis": {
+        "sslscan": {
+            "desc": "SSL/TLS scanner",
+            "install": "apt install sslscan / brew install sslscan",
+            "usage": "sslscan target.com",
+            "category": "ssl"
+        },
+        "testssl": {
+            "desc": "TLS testing tool",
+            "install": "git clone https://github.com/drwetter/testssl.sh",
+            "usage": "./testssl.sh target.com",
+            "category": "ssl"
+        },
+        "sslsplit": {
+            "desc": "SSL/TLS splitting proxy",
+            "install": "apt install sslsplit",
+            "usage": "sslsplit -D -k key.pem -c cert.pem",
+            "category": "ssl"
+        },
+        "openssl": {
+            "desc": "SSL/TLS toolkit",
+            "install": "apt install openssl",
+            "usage": "openssl s_client -connect target.com:443",
+            "category": "ssl"
         },
     },
 }

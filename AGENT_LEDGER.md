@@ -5,7 +5,33 @@
 
 ---
 
-<<<<<<< HEAD
+## [2026-02-23 04:40] - Add New Security Tools & Services
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Expanded:** `cerberus/modules/research.py` - Added 10+ new tool categories
+* **Added:** `cerberus/services/scanner.py` - Network scanner (nmap, masscan, pure Python)
+* **Added:** `cerberus/services/fuzzer.py` - Web fuzzer (dir, subdomain, CMS, tech detection)
+* **Added:** `cerberus/services/exploit.py` - Exploit finder (searchsploit, CVE, GitHub)
+
+### 2. New Tool Categories Added
+- Cloud Security (awscli, azure, gcloud, prowler)
+- Mobile Security (adb, apktool, drozer, frida)
+- API Security (Postman, insomnia, swagger)
+- Social Engineering (setoolkit, king-phisher, gophish)
+- Sniffing & Spoofing (wireshark, tcpdump, bettercap)
+- Privilege Escalation (linpeas, linenum, winpeas)
+- Post Exploitation (mimikatz, laZagne)
+- DNS Tools (dnsenum, dnsmap, fierce, dnstwist)
+- SSL/TLS Analysis (sslscan, testssl, openssl)
+
+### 3. New Services
+- `scanner.py` - Network scanning with fallback to pure Python
+- `fuzzer.py` - Web directory/subdomain/parameter fuzzing
+- `exploit.py` - Search exploits across multiple sources
+
+---
+
 ## [2026-02-23 03:15] - Make Research Module Cross-Platform
 **Task ID / PR Reference:** N/A
 
@@ -127,7 +153,6 @@ python3 -m cerberus.modules.research --scan
 * Test on Linux/macOS for cross-platform compatibility
 * Add more error handling for network issues during download
 * Consider adding bridge support for countries with Tor blocks
->>>>>>> 52b7880 (fixes)
 
 ---
 
