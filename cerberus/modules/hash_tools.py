@@ -196,9 +196,10 @@ __all__ = [
     "generate_hash_sha256", 
     "generate_hash_sha512",
     "generate_hash_sha1",
-    "generate_hash_sha512",
     "generate_hash_blake2b",
     "generate_hash_blake2s",
+    "verify_hash",
+    "hash_file",
 ]
 
 
@@ -234,3 +235,74 @@ def generate_hash_blake2b(text: str) -> str:
 def generate_hash_blake2s(text: str) -> str:
     """Generate BLAKE2s hash (pure function)"""
     return hashlib.blake2s(text.encode()).hexdigest()
+
+
+def verify_hash(text: str, hash_to_verify: str, algorithm: str = "sha256") -> bool:
+    """
+    Verify a text against a hash (pure function)
+    
+    Args:
+        text: The original text to verify
+        hash_to_verify: The hash to verify against
+        algorithm: The hash algorithm to use (md5, sha1, sha256, sha512, blake2b, blake2s)
+    
+    Returns:
+        True if the hash matches, False otherwise
+    """
+    algorithm = algorithm.lower()
+    
+    # Map algorithm names to hashlib functions
+    hash_functions = {
+        "md5": hashlib.md5,
+        "sha1": hashlib.sha1,
+        "sha256": hashlib.sha256,
+        "sha512": hashlib.sha512,
+        "blake2b": hashlib.blake2b,
+        "blake2s": hashlib.blake2s,
+    }
+    
+    if algorithm not in hash_functions:
+        return False
+    
+    try:
+        computed_hash = hash_functions[algorithm](text.encode()).hexdigest()
+        return computed_hash.lower() == hash_to_verify.lower()
+    except Exception:
+        return False
+
+
+def hash_file(file_path: str, algorithm: str = "sha256") -> Optional[str]:
+    """
+    Generate hash of a file (pure function)
+    
+    Args:
+        file_path: Path to the file to hash
+        algorithm: The hash algorithm to use (md5, sha1, sha256, sha512, blake2b, blake2s)
+    
+    Returns:
+        The hash as a hex string, or None if file cannot be read
+    """
+    algorithm = algorithm.lower()
+    
+    # Map algorithm names to hashlib functions
+    hash_functions = {
+        "md5": hashlib.md5,
+        "sha1": hashlib.sha1,
+        "sha256": hashlib.sha256,
+        "sha512": hashlib.sha512,
+        "blake2b": hashlib.blake2b,
+        "blake2s": hashlib.blake2s,
+    }
+    
+    if algorithm not in hash_functions:
+        return None
+    
+    try:
+        hash_obj = hash_functions[algorithm]()
+        with open(file_path, 'rb') as f:
+            # Read file in chunks to handle large files
+            for chunk in iter(lambda: f.read(4096), b''):
+                hash_obj.update(chunk)
+        return hash_obj.hexdigest()
+    except Exception:
+        return None

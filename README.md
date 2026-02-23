@@ -60,7 +60,7 @@ git clone https://github.com/arian47/cerberus.git
 cd cerberus
 ```
 
-### 2. Configure API Keys
+### 2. Configure API Keys (Optional)
 ```bash
 # Copy the example env file
 cp .env.example .env
@@ -70,9 +70,42 @@ nano .env
 ```
 
 ### 3. Run Cerberus
+
+#### Interactive Mode
 ```bash
-python3 cerberus.py
+python cerberus.py
 ```
+
+#### CLI Mode (Headless)
+```bash
+# Hash text
+python -m cerberus.cli.main hash "hello world"
+python -m cerberus.cli.main hash "hello" -a md5
+
+# Encode/Decode
+python -m cerberus.cli.main encode base64 "hello"
+python -m cerberus.cli.main decode base64 "aGVsbG8="
+
+# Generate payloads
+python -m cerberus.cli.main payload sqli
+python -m cerberus.cli.main payload xss
+python -m cerberus.cli.main payload webshell
+python -m cerberus.cli.main payload reverse --lhost 10.10.10.10 --port 4444
+
+# Tor status
+python -m cerberus.cli.main tor status
+```
+
+## CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `hash <text> [-a algo]` | Generate hash (md5, sha1, sha256, sha512, blake2) |
+| `verify <text> <hash> [-a algo]` | Verify hash |
+| `encode <type> <text>` | Encode (base64, url, html, hex, rot13, morse) |
+| `decode <type> <text>` | Decode (base64, url, html, hex, rot13) |
+| `payload <type>` | Generate payload (webshell, reverse, sqli, xss) |
+| `tor <action>` | Tor operations (status, install) |
 
 ## Configuration (.env)
 
@@ -157,11 +190,47 @@ $ python3 cerberus.py
 
 ```
 cerberus/
-├── .env.example     # Example environment configuration
-├── .env            # Your API keys (not committed)
-├── cerberus.py     # Main CLI application
-├── auto_update.py  # Vulnerability auto-updater
-└── README.md       # This file
+├── .env.example          # Example environment configuration
+├── .env                 # Your API keys (not committed)
+├── cerberus.py          # Main interactive CLI application
+├── auto_update.py       # Vulnerability auto-updater
+├── cerberus/
+│   ├── services/        # Microservices
+│   │   ├── hash.py     # Hashing service
+│   │   ├── encoder.py  # Encoding service
+│   │   ├── llm.py      # LLM connectors
+│   │   ├── payloads.py # Payload generation
+│   │   ├── tor.py      # Tor network service
+│   │   ├── password.py # Password utilities
+│   │   ├── network.py  # Network scanner
+│   │   ├── vulnerability.py # Vulnerability database
+│   │   └── redteam.py  # Red team testing
+│   ├── cli/            # CLI components
+│   │   ├── main.py     # Headless CLI entry point
+│   │   └── renderers.py
+│   ├── utils/         # Common utilities
+│   └── modules/        # Original modules
+├── docs/               # Documentation
+│   ├── API.md
+│   └── ARCHITECTURE.md
+└── README.md
+```
+
+## Microservices
+
+Cerberus uses a microservices architecture. Import services directly:
+
+```python
+from cerberus.services import hash_text, base64_encode, call_model
+
+# Hash
+hash_text("data", "sha256")
+
+# Encode
+base64_encode("secret")
+
+# LLM (requires API key)
+call_model("1", "your prompt")
 ```
 
 ## Auto-Update

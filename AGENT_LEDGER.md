@@ -5,6 +5,7 @@
 
 ---
 
+<<<<<<< HEAD
 ## [2026-02-23 03:15] - Make Research Module Cross-Platform
 **Task ID / PR Reference:** N/A
 
@@ -55,6 +56,78 @@ python3 -m cerberus.modules.research --scan
 * Pre-execution: Plan → Get approval → Implement → Document
 * Modular design with single-responsibility modules
 * Comprehensive documentation
+=======
+## [2026-02-22 02:25] - Security & Visual Test Suite
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Added:** `tests/test_security_visual.py` - New security and visual test suite (35 new tests)
+
+### 2. Test Coverage
+* **Security Input Validation Tests (7):**
+  - Null bytes, large input, binary data, mixed encoding
+  - Control character leak prevention, unicode bombs
+  
+* **Path Traversal Tests (2):**
+  - Module safety verification
+  - Safe string operations
+  
+* **Visual/Rich UI Tests (13):**
+  - Console, Panel, Table, Progress, Syntax, Markdown
+  - Colors and formatting
+  - Layout and structure
+  
+* **Tor Module Tests (4):**
+  - Import, constants, TorConnection class, endpoints
+  
+* **Connector Security Tests (3):**
+  - Missing API key handling
+  - URL validation
+  
+* **Error Handling Tests (3):**
+  - Invalid input handling
+  
+* **Main Entry Tests (3):**
+  - Import, menu function, --help flag
+
+### 3. Test Results
+* **All 115 tests passing**
+
+### 4. Recommendations & Next Steps
+* Continue expanding edge case coverage
+* Add more fuzzing tests for encoder module
+
+---
+
+## [2026-02-22 01:30] - Add Tor Network Module with Auto-Install
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Added:** `cerberus/modules/tor.py` - New Tor network module with automatic installation
+* **Added:** Tor integration to main menu (option 6)
+* **Updated:** `requirements.txt` - Added stem, rich, PySocks dependencies
+
+### 2. Rationale & Architecture
+* **Why:** User requested Tor network integration with automatic installation
+* **Features:**
+  - Automatic Tor detection (Tor Browser, system PATH)
+  - Auto-install via Chocolatey or direct download
+  - Tor Expert Bundle download and extraction
+  - Proper torrc configuration for SOCKS proxy
+  - Real-time status display
+  - New Identity (IP renewal) support
+
+### 3. Technical Details
+* Uses `socks5h://` proxy for DNS resolution through Tor
+* Downloads Tor Expert Bundle 15.0.6 for Windows
+* Creates proper torrc config with SocksPort 9050 and ControlPort 9051
+* Handles Tor service startup on Windows
+
+### 4. Recommendations & Next Steps
+* Test on Linux/macOS for cross-platform compatibility
+* Add more error handling for network issues during download
+* Consider adding bridge support for countries with Tor blocks
+>>>>>>> 52b7880 (fixes)
 
 ---
 

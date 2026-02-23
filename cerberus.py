@@ -6,8 +6,33 @@ The Three-Headed Hellhound of Security
 
 import os
 import sys
+
+# Set UTF-8 encoding for Windows before any other imports
+if sys.platform == 'win32':
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
+    os.environ['TERM'] = 'xterm-256color'
+
 import requests
 import re
+import time
+
+# Reconfigure stdout/stderr for UTF-8 encoding on Windows
+if sys.platform == 'win32':
+    try:
+        # Try to reconfigure stdout/stderr for UTF-8
+        if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+            sys.stdout = open(sys.stdout.fileno, mode='w', encoding='utf-8', buffering=1)
+        if sys.stderr.encoding and sys.stderr.encoding.lower() != 'utf-8':
+            sys.stderr = open(sys.stderr.fileno, mode='w', encoding='utf-8', buffering=1)
+    except Exception:
+        pass  # Ignore errors if reconfiguration fails
+
+# Try to import Tor module
+try:
+    from cerberus.modules.tor import tor_connection, module_tor
+    TOR_AVAILABLE = True
+except ImportError:
+    TOR_AVAILABLE = False
 
 # ============================================================
 # LOAD ENVIRONMENT VARIABLES
@@ -64,7 +89,8 @@ try:
     from rich.prompt import Prompt, Confirm
     from rich import box
     RICH_AVAILABLE = True
-    console = Console()
+    # Disable legacy Windows mode to avoid encoding issues with Unicode box characters
+    console = Console(legacy_windows=False)
 except ImportError:
     RICH_AVAILABLE = False
     console = None
@@ -73,6 +99,7 @@ except ImportError:
 def print_header():
     """Print premium header with Rich"""
     if RICH_AVAILABLE:
+        console.clear()  # Always clear screen before printing header
         title = Text()
         title.append("══════════════════════════════════════════════════════════\n", style="cyan bold")
         title.append("  C  E  R  B  E  R  U  S                              \n", style="cyan bold")
@@ -86,21 +113,28 @@ def print_main_menu():
     """Print main menu with Rich"""
     if RICH_AVAILABLE:
         table = Table(box=None, show_header=False, pad_edge=False)
-        table.add_column(style="cyan", width=6)
+        table.add_column(style="cyan", width=8)
         table.add_column(style="white")
         
         menu_items = [
-            ("[1]", "OSINT & INTELLIGENCE", "Threat Research & Vulnerability DB"),
-            ("[2]", "RED TEAM", "LLM Security Testing"),
-            ("[3]", "UTILITY TOOLS", "Hash, Encoder & More"),
-            ("[4]", "SETTINGS", "Configuration"),
-            ("[5]", "UPDATE", "Check for Updates"),
+            ("[1]", "⚡ OSINT & INTELLIGENCE", "Threat Research & Vulnerability DB"),
+            ("[2]", "◎ RED TEAM", "LLM Security Testing"),
+            ("[3]", "◉ UTILITY TOOLS", "Hash, Encoder & More"),
+            ("[4]", "⟳ SETTINGS", "Configuration"),
+            ("[5]", "★ UPDATE", "Check for Updates"),
         ]
+        
+        # Add Tor option if available
+        if TOR_AVAILABLE:
+            from cerberus.modules.tor import tor_connection
+            status = tor_connection.get_tor_info()
+            tor_status = "✓" if status["running"] else "○"
+            menu_items.append(("[6]", f"⬡ TOR NETWORK {tor_status}", "Anonymous browsing"))
         
         for num, title, desc in menu_items:
             table.add_row(
                 f"[bold cyan]{num}[/bold cyan]",
-                f"[bold]{title}[/bold]  [dim]-[dim]  {desc}"
+                f"[bold]{title}[/bold]  [dim]•[/dim]  {desc}"
             )
         
         console.print(Panel(
@@ -111,20 +145,44 @@ def print_main_menu():
             padding=(1, 2)
         ))
         
+        # Show real-time Tor stats if connected
+        if TOR_AVAILABLE:
+            from cerberus.modules.tor import tor_connection
+            status = tor_connection.get_tor_info()
+            if status["running"]:
+                stats_table = Table(box=None, show_header=False, pad_edge=False)
+                stats_table.add_column(style="green", width=4)
+                stats_table.add_column(style="white")
+                
+                ip_info = f"IP: {status.get('ip', 'N/A')}"
+                if status.get('country'):
+                    location = f"{status.get('city', '')}, {status.get('country', '')}"
+                    ip_info += f" • {location}"
+                
+                stats_table.add_row("◉", ip_info)
+                
+                console.print(Panel(
+                    stats_table,
+                    title="[bold green]TOR ACTIVE[/bold green]",
+                    border_style="green",
+                    box=box.ROUNDED,
+                    padding=(0, 2)
+                ))
+        
         console.print("\n[dim]  [q] QUIT    - Exit Cerberus[/dim]\n")
 
 
-def print_submenu(title: str, items: list, back: bool = True):
+def print_submenu(title: str, items: list, back: bool = True, show_home: bool = False):
     """Print a submenu with Rich"""
     if RICH_AVAILABLE:
         table = Table(box=None, show_header=False, pad_edge=False)
-        table.add_column(style="cyan", width=6)
+        table.add_column(style="cyan", width=8)
         table.add_column(style="white")
         
         for num, name, desc in items:
             table.add_row(
                 f"[bold cyan]{num}[/bold cyan]",
-                f"[bold]{name}[/bold]  [dim]-[dim]  {desc}"
+                f"[bold]{name}[/bold]  [dim]•[/dim]  {desc}"
             )
         
         console.print(Panel(
@@ -135,9 +193,41 @@ def print_submenu(title: str, items: list, back: bool = True):
             padding=(1, 2)
         ))
         
-        if back:
-            console.print("\n[dim]  [b] BACK    - Return to Main Menu[/dim]")
-        console.print("[dim]  [q] QUIT    - Exit Cerberus[/dim]\n")
+        # Show Tor stats on every submenu
+        if TOR_AVAILABLE:
+            from cerberus.modules.tor import tor_connection
+            status = tor_connection.get_tor_info()
+            if status["running"]:
+                stats_table = Table(box=None, show_header=False, pad_edge=False)
+                stats_table.add_column(style="green", width=4)
+                stats_table.add_column(style="white")
+                
+                ip_info = f"IP: {status.get('ip', 'N/A')}"
+                if status.get('country'):
+                    location = f"{status.get('city', '')}, {status.get('country', '')}"
+                    ip_info += f" • {location}"
+                
+                stats_table.add_row("◉", ip_info)
+                
+                console.print(Panel(
+                    stats_table,
+                    title="[bold green]TOR ACTIVE[/bold green]",
+                    border_style="green",
+                    box=box.ROUNDED,
+                    padding=(0, 2)
+                ))
+        
+        # Always show navigation options
+        nav_options = []
+        if show_home:
+            nav_options.append("[h] HOME   - Return to Main Menu")
+        elif back:
+            nav_options.append("[b] BACK   - Return to Main Menu")
+        nav_options.append("[q] QUIT   - Exit Cerberus")
+        
+        for opt in nav_options:
+            console.print(f"\n[dim]  {opt}[/dim]")
+        console.print()
 
 
 def print_panel(title: str, content: str = None, style: str = "cyan"):
@@ -668,6 +758,8 @@ def analyze_response(response):
 # ============================================================
 
 def module_redteam():
+    if RICH_AVAILABLE:
+        print_header()
     print_panel("RED TEAM - LLM Vulnerability Testing")
     
     # Check available APIs
@@ -840,6 +932,8 @@ def fetch_cybersecurity_news():
 
 def module_osint():
     """OSINT Module"""
+    if RICH_AVAILABLE:
+        print_header()
     print_panel("OSINT MODULE - Threat Intelligence")
     
     items = [
@@ -902,9 +996,72 @@ def module_osint():
         print_error("Invalid selection")
 
 def module_settings():
-    print_panel("SETTINGS")
-    print_api_keys()
-    pause()
+    """Settings module with API keys and Tor configuration"""
+    while True:
+        if RICH_AVAILABLE:
+            print_header()
+        print_panel("SETTINGS", style="cyan")
+        
+        items = [
+            ("1", "API Keys", "View and configure API keys"),
+            ("2", "Tor Network", "Connect to Tor for anonymity"),
+            ("3", "Proxy Settings", "Configure proxy connections"),
+        ]
+        
+        if TOR_AVAILABLE:
+            # Show Tor status
+            from cerberus.modules.tor import tor_connection
+            status = tor_connection.get_tor_info()
+            status_str = "✓ Connected" if status["running"] else "✗ Not Connected"
+            items.append(("4", f"Tor Status: {status_str}", "Check Tor connection"))
+        else:
+            items.append(("4", "Tor Status", "Tor module not available"))
+        
+        print_submenu("Settings Options", items, back=False)
+        
+        choice = get_input("Select")
+        
+        if choice == "1":
+            print_panel("API KEYS")
+            print_api_keys()
+            pause()
+        elif choice == "2":
+            if TOR_AVAILABLE:
+                module_tor()
+            else:
+                print_error("Tor module not available. Please install stem library.")
+                print("pip install stem")
+                pause()
+        elif choice == "3":
+            print_panel("PROXY SETTINGS")
+            print("  Configure proxy settings in .env file")
+            print("  HTTP_PROXY=https://proxy:8080")
+            print("  HTTPS_PROXY=https://proxy:8080")
+            print("  SOCKS_PROXY=socks5://proxy:1080")
+            pause()
+        elif choice == "4":
+            if TOR_AVAILABLE:
+                from cerberus.modules.tor import tor_connection
+                status = tor_connection.get_tor_info()
+                print_panel("TOR STATUS", style="purple")
+                print(f"  Running: {'Yes' if status['running'] else 'No'}")
+                print(f"  IP: {status['ip'] or 'Not connected'}")
+                print(f"  Exit Node: {'Yes' if status.get('tor_exit') else 'No'}")
+                if status.get('country'):
+                    print(f"  Location: {status['city']}, {status['country']}")
+                if status.get('isp'):
+                    print(f"  ISP: {status['isp']}")
+                pause()
+            else:
+                print_error("Tor module not available")
+                pause()
+        elif choice.lower() == "b" or choice.lower() == "back":
+            break
+        elif choice.lower() == "h":
+            return  # Go back to main menu
+        else:
+            print_error("Invalid selection")
+            time.sleep(0.5)
 
 def module_tools():
     """General utility tools - called from tools_submenu"""
@@ -949,9 +1106,8 @@ def module_tools():
 
 def main():
     while True:
-        # Use Rich UI if available
+        # Use Rich UI if available - print_header handles console.clear()
         if RICH_AVAILABLE:
-            console.clear()
             print_header()
             print_main_menu()
         else:
@@ -970,6 +1126,15 @@ def main():
         elif choice == "5":
             print_info("Use: python3 auto_update.py --scan")
             pause()
+        elif choice == "6":
+            if TOR_AVAILABLE:
+                module_tor()
+            else:
+                print_error("Tor module not available")
+                pause()
+        elif choice == "h":
+            # Home - just continue to loop (already at main)
+            continue
         elif choice == "q":
             if RICH_AVAILABLE:
                 console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
@@ -985,11 +1150,14 @@ def main():
 def osint_submenu():
     """OSINT & Intelligence submenu"""
     while True:
+        if RICH_AVAILABLE:
+            print_header()
+        
         items = [
-            ("1", "Threat Intelligence", "Domain/IP Research"),
-            ("2", "Vulnerabilities DB", "Known LLM Vulnerabilities"),
-            ("3", "Vulnerability Scanner", "Security Assessment"),
-            ("4", "News & Feeds", "Latest Threat Intelligence"),
+            ("1", "⚡ Threat Intelligence", "Domain/IP Research"),
+            ("2", "◉ Vulnerabilities DB", "Known LLM Vulnerabilities"),
+            ("3", "◎ Vulnerability Scanner", "Security Assessment"),
+            ("4", "⟳ News & Feeds", "Latest Threat Intelligence"),
         ]
         print_submenu("OSINT & INTELLIGENCE", items)
         
@@ -1015,6 +1183,8 @@ def osint_submenu():
             pause()
         elif choice == "b":
             break
+        elif choice == "h":
+            return  # Go back to main menu
         elif choice == "q":
             if RICH_AVAILABLE:
                 console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
@@ -1028,10 +1198,13 @@ def osint_submenu():
 def redteam_submenu():
     """Red Team submenu"""
     while True:
+        if RICH_AVAILABLE:
+            print_header()
+        
         items = [
-            ("1", "LLM Vulnerability Test", "Test Models for Bypasses"),
-            ("2", "Payload Generator", "Create Custom Payloads"),
-            ("3", "Advanced Attacks", "Premium Bypass Techniques"),
+            ("1", "⚡ LLM Vulnerability Test", "Test Models for Bypasses"),
+            ("2", "◎ Payload Generator", "Create Custom Payloads"),
+            ("3", "◉ Advanced Attacks", "Premium Bypass Techniques"),
         ]
         print_submenu("RED TEAM MODULE", items)
         
@@ -1045,6 +1218,8 @@ def redteam_submenu():
             module_advanced_attacks()
         elif choice == "b":
             break
+        elif choice == "h":
+            return  # Go back to main menu
         elif choice == "q":
             if RICH_AVAILABLE:
                 console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
@@ -1058,10 +1233,13 @@ def redteam_submenu():
 def tools_submenu():
     """Tools submenu"""
     while True:
+        if RICH_AVAILABLE:
+            print_header()
+        
         items = [
-            ("1", "Hash Tools", "Generate & Verify Hashes"),
-            ("2", "Encoder/Decoder", "Encode/Decode Utilities"),
-            ("3", "General Tools", "Additional Utilities"),
+            ("1", "⚡ Hash Tools", "Generate & Verify Hashes"),
+            ("2", "◎ Encoder/Decoder", "Encode/Decode Utilities"),
+            ("3", "◉ General Tools", "Additional Utilities"),
         ]
         print_submenu("UTILITY TOOLS", items)
         
@@ -1075,6 +1253,8 @@ def tools_submenu():
             module_tools()
         elif choice == "b":
             break
+        elif choice == "h":
+            return  # Go back to main menu
         elif choice == "q":
             if RICH_AVAILABLE:
                 console.print(f"\n[bold green]🔒 Cerberus v1.0.0 - Stay Secure[/bold green]\n")
@@ -1203,6 +1383,8 @@ ADVANCED_ATTACKS_CATEGORIES = {
 
 def module_advanced_attacks():
     """Premium advanced attack techniques"""
+    if RICH_AVAILABLE:
+        print_header()
     print(box_title("ADVANCED ATTACKS - Premium Red Team"))
     
     print(f"""
@@ -1465,6 +1647,8 @@ PAYLOAD_TEMPLATES = {
 
 def module_payload_generator():
     """Generate custom payloads"""
+    if RICH_AVAILABLE:
+        print_header()
     print(box_title("PAYLOAD GENERATOR - Premium"))
     
     print(f"""
@@ -1582,6 +1766,8 @@ HASH_ALGORITHMS = {
 
 def module_hash_tools():
     """Hash generation and cracking utilities"""
+    if RICH_AVAILABLE:
+        print_header()
     print(box_title("HASH TOOLS"))
     
     print(f"""
@@ -1757,6 +1943,8 @@ def hash_comparison():
 
 def module_encoder():
     """Encode and decode utilities"""
+    if RICH_AVAILABLE:
+        print_header()
     print(box_title("ENCODER/DECODER"))
     
     print(f"""

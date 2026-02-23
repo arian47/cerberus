@@ -30,6 +30,7 @@
 
 ## 5. Execution Phase (Implementation & Self-Correction)
 * **Iterative Implementation:** Write and modify code in small, testable increments.
+* **Cross Platform Implementation:** any solution implemented must work cross platform on any OS type.
 * **Test-Driven Execution:** Write or update automated tests for your new code. Run the relevant test suite after every significant change.
 * **Self-Correction Protocol:** If a test fails or a syntax error occurs:
     1. Read the error trace carefully.

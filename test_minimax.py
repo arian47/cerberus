@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 """
 MiniMax Breach Tester - Tests for actual content extraction
+Security research tool for testing LLM vulnerabilities
 """
 
+import os
+import sys
 import requests
 
-MINIMAX_API_KEY = "sk-cp-m5hkOzZBpeMBZ4FnVKhWUlKO6QVbKzuI71p4aQSy8gmsRSxf7s75Sy_8bpcHkzSuhU1p1wUJNfdQMM6xPIY6XYS8G4NxZkfYCU22y29ogk0WAc3ETNF63Gg"
+# Load API key from environment variable (RULES.md compliant)
+MINIMAX_API_KEY = os.getenv("MINIMAX_API_KEY", "")
+
+if not MINIMAX_API_KEY:
+    print("ERROR: MINIMAX_API_KEY environment variable not set")
+    print("Set it with: export MINIMAX_API_KEY='your_key' (Linux/Mac) or $env:MINIMAX_API_KEY='your_key' (Windows)")
+    sys.exit(1)
+
 url = "https://api.minimax.io/v1/chat/completions"
 headers = {"Authorization": f"Bearer {MINIMAX_API_KEY}", "Content-Type": "application/json"}
 

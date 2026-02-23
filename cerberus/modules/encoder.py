@@ -325,3 +325,95 @@ def hex_decode_text(text: str) -> Optional[str]:
         return bytes.fromhex(text).decode()
     except Exception:
         return None
+
+
+# ============================================================
+# ADDITIONAL ENCODERS (for pentesting/security testing)
+# ============================================================
+
+def binary_encode_text(text: str) -> str:
+    """Encode text to binary (pure function)"""
+    return ' '.join(format(ord(c), '08b') for c in text)
+
+
+def binary_decode_text(text: str) -> Optional[str]:
+    """Decode binary to text (pure function)"""
+    try:
+        binary_values = text.split()
+        ascii_string = ""
+        for binary_value in binary_values:
+            if len(binary_value) == 8:
+                ascii_string += chr(int(binary_value, 2))
+        return ascii_string if ascii_string else None
+    except Exception:
+        return None
+
+
+def json_encode_text(data) -> str:
+    """Encode data to JSON (pure function)"""
+    import json
+    return json.dumps(data)
+
+
+def json_decode_text(text: str):
+    """Decode JSON to data (pure function)"""
+    import json
+    try:
+        return json.loads(text)
+    except Exception:
+        return None
+
+
+def rot13_encode_text(text: str) -> str:
+    """Encode text using ROT13 (pure function)"""
+    import codecs
+    return codecs.encode(text, 'rot_13')
+
+
+def rot13_decode_text(text: str) -> str:
+    """Decode ROT13 text (pure function)"""
+    import codecs
+    return codecs.decode(text, 'rot_13')
+
+
+# Morse code dictionary
+MORSE_CODE_DICT = {
+    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+    'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+    'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+    'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+    'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--',
+    '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
+    '9': '----.', '0': '-----', ' ': '/'
+}
+
+MORSE_REVERSE_DICT = {v: k for k, v in MORSE_CODE_DICT.items()}
+
+
+def morse_encode_text(text: str) -> str:
+    """Encode text to Morse code (pure function)"""
+    text = text.upper()
+    morse = []
+    for char in text:
+        if char in MORSE_CODE_DICT:
+            morse.append(MORSE_CODE_DICT[char])
+        else:
+            morse.append(char)
+    return ' '.join(morse)
+
+
+def morse_decode_text(text: str) -> Optional[str]:
+    """Decode Morse code to text (pure function)"""
+    try:
+        words = text.split(' / ')
+        decoded = []
+        for word in words:
+            letters = word.split()
+            for letter in letters:
+                if letter in MORSE_REVERSE_DICT:
+                    decoded.append(MORSE_REVERSE_DICT[letter])
+            decoded.append(' ')
+        result = ''.join(decoded).strip()
+        return result if result else None
+    except Exception:
+        return None

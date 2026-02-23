@@ -12,7 +12,6 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 from rich.prompt import Prompt, Confirm, PromptBase
 from rich.live import Live
 from rich.layout import Layout
-from rich.vertical import Vertical
 from rich.align import Align
 from rich.box import Box, DOUBLE, ROUNDED, SIMPLE
 from rich.theme import Theme
@@ -207,6 +206,11 @@ def get_input(prompt_text: str = "Select", default: str = "") -> str:
     else:
         result = Prompt.ask(f"[bold cyan]{prompt_text} >[/bold cyan]")
     return result.strip()
+
+
+def get_user_input(prompt_text: str = "Select", default: str = "") -> str:
+    """Get user input - alias for get_input"""
+    return get_input(prompt_text, default)
 
 
 def get_yes_no(prompt_text: str) -> bool:
