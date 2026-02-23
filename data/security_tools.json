@@ -1,0 +1,937 @@
+{
+  "tools": {
+    "Information Gathering": {
+      "nmap": {
+        "desc": "Network scanner - discovers hosts/services",
+        "install": "apt install nmap / brew install nmap / choco install nmap",
+        "usage": "nmap -sV -sC target.com",
+        "category": "recon"
+      },
+      "masscan": {
+        "desc": "Fast TCP port scanner",
+        "install": "apt install masscan / brew install masscan",
+        "usage": "masscan -p1-65535 target.com --rate=10000",
+        "category": "recon"
+      },
+      "netdiscover": {
+        "desc": "ARP-based network discovery",
+        "install": "apt install netdiscover",
+        "usage": "netdiscover -r 192.168.1.0/24",
+        "category": "recon"
+      },
+      "theHarvester": {
+        "desc": "Email/subdomain harvester",
+        "install": "pip install theHarvester",
+        "usage": "theHarvester -d target.com -b all",
+        "category": "recon"
+      },
+      "subfinder": {
+        "desc": "Passive subdomain enumeration",
+        "install": "go install -v github.com/projectdiscovery/subfinder/v2/...@latest",
+        "usage": "subfinder -d target.com",
+        "category": "recon"
+      },
+      "amass": {
+        "desc": "Network mapping of attack surfaces",
+        "install": "go install -v github.com/OWASP/Amass/v3/...@latest",
+        "usage": "amass enum -d target.com",
+        "category": "recon"
+      },
+      "knock": {
+        "desc": "Port knock scanner",
+        "install": "apt install knock",
+        "usage": "knock target.com 1000 2000 3000",
+        "category": "recon"
+      },
+      "zenmap": {
+        "desc": "Nmap GUI",
+        "install": "apt install zenmap",
+        "usage": "zenmap target.com",
+        "category": "recon"
+      }
+    },
+    "Vulnerability Analysis": {
+      "nikto": {
+        "desc": "Web server vulnerability scanner",
+        "install": "apt install nikto / brew install nikto",
+        "usage": "nikto -h target.com",
+        "category": "vuln"
+      },
+      "nuclei": {
+        "desc": "Template-based vulnerability scanner",
+        "install": "go install -v github.com/projectdiscovery/nuclei/v3/...@latest",
+        "usage": "nuclei -u target.com",
+        "category": "vuln"
+      },
+      "openvas": {
+        "desc": "Full vulnerability scanner",
+        "install": "apt install openvas",
+        "usage": "openvas-start",
+        "category": "vuln"
+      }
+    },
+    "Exploitation": {
+      "metasploit": {
+        "desc": "Exploitation framework",
+        "install": "apt install metasploit-framework / brew install metasploit",
+        "usage": "msfconsole",
+        "category": "exploit"
+      },
+      "sqlmap": {
+        "desc": "SQL injection automation",
+        "install": "apt install sqlmap / pip install sqlmap",
+        "usage": "sqlmap -u target.com vuln param",
+        "category": "exploit"
+      },
+      "searchsploit": {
+        "desc": "Exploit-DB search tool",
+        "install": "apt install exploitdb / brew install exploitdb",
+        "usage": "searchsploit apache 2.4",
+        "category": "exploit"
+      },
+      "hydra": {
+        "desc": "Password brute-forcing tool",
+        "install": "apt install hydra / brew install hydra",
+        "usage": "hydra -L users.txt -P passwords.txt target.com ssh",
+        "category": "exploit"
+      }
+    },
+    "Wireless": {
+      "aircrack-ng": {
+        "desc": "WiFi security auditing",
+        "install": "apt install aircrack-ng",
+        "usage": "aircrack-ng capture.cap",
+        "category": "wireless"
+      },
+      "wifite": {
+        "desc": "Automated wireless auditor",
+        "install": "apt install wifite / pip install wifite2",
+        "usage": "wifite",
+        "category": "wireless"
+      }
+    },
+    "Password Attacks": {
+      "hashcat": {
+        "desc": "Fast password recovery",
+        "install": "apt install hashcat / brew install hashcat",
+        "usage": "hashcat -m 0 hashes.txt wordlist.txt",
+        "category": "password"
+      },
+      "john": {
+        "desc": "John the Ripper",
+        "install": "apt install john / brew install john",
+        "usage": "john hash.txt",
+        "category": "password"
+      },
+      "cewl": {
+        "desc": "Custom wordlist generator",
+        "install": "apt install cewl / brew install cewl",
+        "usage": "cewl target.com -m 6 -w wordlist.txt",
+        "category": "password"
+      }
+    },
+    "Web Applications": {
+      "burpsuite": {
+        "desc": "Web application security testing",
+        "install": "Download from https://portswigger.net/burp",
+        "usage": "java -jar burpsuite.jar",
+        "category": "web"
+      },
+      "zap": {
+        "desc": "OWASP ZAP proxy",
+        "install": "apt install zaproxy / brew install owasp-zap",
+        "usage": "zap.sh",
+        "category": "web"
+      },
+      "gobuster": {
+        "desc": "Directory/Subdomain fuzzing",
+        "install": "go install github.com/OJ/gobuster/v3@latest",
+        "usage": "gobuster dir -u target.com -w wordlist.txt",
+        "category": "web"
+      },
+      "dirb": {
+        "desc": "Web content scanner",
+        "install": "apt install dirb",
+        "usage": "dirb target.com",
+        "category": "web"
+      }
+    },
+    "Reverse Engineering": {
+      "ghidra": {
+        "desc": "Software reverse engineering",
+        "install": "Download from https://ghidra-sre.org/",
+        "usage": "ghidraRun",
+        "category": "re"
+      },
+      "radare2": {
+        "desc": "Command-line reverse engineering",
+        "install": "apt install radare2 / brew install radare2",
+        "usage": "r2 binary",
+        "category": "re"
+      },
+      "objdump": {
+        "desc": "Disassembler (part of binutils)",
+        "install": "apt install binutils / brew install binutils",
+        "usage": "objdump -d binary",
+        "category": "re"
+      }
+    },
+    "Forensics": {
+      "autopsy": {
+        "desc": "Digital forensics platform",
+        "install": "apt install autopsy",
+        "usage": "autopsy",
+        "category": "forensics"
+      },
+      "volatility": {
+        "desc": "Memory forensics framework",
+        "install": "pip install volatility3",
+        "usage": "volatility -f memdump.raw",
+        "category": "forensics"
+      },
+      "binwalk": {
+        "desc": "Binary analysis tool",
+        "install": "apt install binwalk / pip install binwalk",
+        "usage": "binwalk firmware.bin",
+        "category": "forensics"
+      }
+    },
+    "LLM Security": {
+      "burp-suite": {
+        "desc": "Web proxy for testing LLM apps",
+        "install": "Download from PortSwigger",
+        "usage": "Intercept and analyze LLM API calls",
+        "category": "llm"
+      },
+      "payloads": {
+        "desc": "LLM jailbreak payloads collection",
+        "install": "git clone https://github.com/GeorgioMaia/llm-payloads",
+        "usage": "Use for red teaming LLM applications",
+        "category": "llm"
+      }
+    },
+    "Cloud Security": {
+      "awscli": {
+        "desc": "AWS command line interface",
+        "install": "pip install awscli",
+        "usage": "aws s3 ls / aws ec2 describe-instances",
+        "category": "cloud"
+      },
+      "azure-cli": {
+        "desc": "Microsoft Azure CLI",
+        "install": "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash",
+        "usage": "az vm list",
+        "category": "cloud"
+      },
+      "gcloud": {
+        "desc": "Google Cloud CLI",
+        "install": "curl https://sdk.cloud.google.com | bash",
+        "usage": "gcloud compute instances list",
+        "category": "cloud"
+      },
+      "cloudmapper": {
+        "desc": "AWS security visualization",
+        "install": "pip install cloudmapper",
+        "usage": "cloudmapper.py report --account myaccount",
+        "category": "cloud"
+      },
+      "prowler": {
+        "desc": "AWS security assessment",
+        "install": "pip install prowler",
+        "usage": "prowler aws",
+        "category": "cloud"
+      },
+      "cloudfrunt": {
+        "desc": "Find domain variants for cloud services",
+        "install": "git clone https://github.com/dustinmiano/cloudfrunt",
+        "usage": "python3 cloudfrunt.py -d example.com",
+        "category": "cloud"
+      }
+    },
+    "Mobile Security": {
+      "adb": {
+        "desc": "Android Debug Bridge",
+        "install": "apt install adb / brew install adb",
+        "usage": "adb devices / adb shell",
+        "category": "mobile"
+      },
+      "apktool": {
+        "desc": "Android APK decompiler",
+        "install": "apt install apktool / brew install apktool",
+        "usage": "apktool d app.apk",
+        "category": "mobile"
+      },
+      "jadx": {
+        "desc": "Dex to Java decompiler",
+        "install": "Download from jadx.github.io",
+        "usage": "jadx app.apk",
+        "category": "mobile"
+      },
+      "drozer": {
+        "desc": "Android security assessment",
+        "install": "pip install drozer",
+        "usage": "drozer console connect",
+        "category": "mobile"
+      },
+      "frida": {
+        "desc": "Dynamic instrumentation toolkit",
+        "install": "pip install frida-tools",
+        "usage": "frida -U -f com.app",
+        "category": "mobile"
+      }
+    },
+    "API Security": {
+      "Postman": {
+        "desc": "API testing platform",
+        "install": "Download from postman.com",
+        "usage": "GUI for API testing",
+        "category": "api"
+      },
+      "insomnia": {
+        "desc": "API design platform",
+        "install": "apt install insomnia / brew install insomnia",
+        "usage": "insomnia",
+        "category": "api"
+      },
+      "swagger": {
+        "desc": "API documentation tool",
+        "install": "npm install -g swagger",
+        "usage": "swagger project create",
+        "category": "api"
+      },
+      "restler": {
+        "desc": "REST API fuzzer",
+        "install": "git clone Microsoft/restler-fuzzer",
+        "usage": "python restler.py",
+        "category": "api"
+      }
+    },
+    "Social Engineering": {
+      "setoolkit": {
+        "desc": "Social-Engineer Toolkit",
+        "install": "apt install set",
+        "usage": "setoolkit",
+        "category": "social"
+      },
+      "king-phisher": {
+        "desc": "Phishing campaign tool",
+        "install": "apt install king-phisher",
+        "usage": "king-phisher",
+        "category": "social"
+      },
+      "gophish": {
+        "desc": "Open-source phishing framework",
+        "install": "Download from getgophish.com",
+        "usage": "./gophish",
+        "category": "social"
+      },
+      "evilginx2": {
+        "desc": "Man-in-the-middle proxy",
+        "install": "go get -u github.com/kgretzky/evilginx2",
+        "usage": "evilginx -p /path/to/phishlets",
+        "category": "social"
+      }
+    },
+    "Sniffing & Spoofing": {
+      "wireshark": {
+        "desc": "Network protocol analyzer",
+        "install": "apt install wireshark / brew install wireshark",
+        "usage": "wireshark",
+        "category": "sniff"
+      },
+      "tcpdump": {
+        "desc": "Command-line packet analyzer",
+        "install": "apt install tcpdump / brew install tcpdump",
+        "usage": "tcpdump -i eth0",
+        "category": "sniff"
+      },
+      "ettercap": {
+        "desc": "Man-in-the-middle tool",
+        "install": "apt install ettercap-graphical",
+        "usage": "ettercap -G",
+        "category": "sniff"
+      },
+      "bettercap": {
+        "desc": "Swiss army knife for network",
+        "install": "go get -u github.com/bettercap/bettercap",
+        "usage": "bettercap -X",
+        "category": "sniff"
+      },
+      "dsniff": {
+        "desc": "Network sniffing tools",
+        "install": "apt install dsniff",
+        "usage": "dsniff -i eth0",
+        "category": "sniff"
+      }
+    },
+    "Privilege Escalation": {
+      "linpeas": {
+        "desc": "Linux privilege escalation checker",
+        "install": "curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh",
+        "usage": "curl -L https://github.com/carlospolop/PEASS-ng/... | sh",
+        "category": "privesc"
+      },
+      "linenum": {
+        "desc": "Linux local enumeration",
+        "install": "git clone https://github.com/rebootuser/LinEnum",
+        "usage": "./LinEnum.sh",
+        "category": "privesc"
+      },
+      "linux-exploit-suggester": {
+        "desc": "Find Linux exploits",
+        "install": "git clone https://github.com/mzet-/linux-exploit-suggester",
+        "usage": "./linux-exploit-suggester.pl",
+        "category": "privesc"
+      },
+      "winpeas": {
+        "desc": "Windows privilege escalation",
+        "install": "Download from github.com/carlospolop/PEASS-ng",
+        "usage": "winpeas.exe",
+        "category": "privesc"
+      },
+      "powerup": {
+        "desc": "Windows privilege escalation",
+        "install": "git clone https://github.com/PowerShellMafia/PowerSploit",
+        "usage": "powershell -ExecutionPolicy Bypass -File powerup.ps1",
+        "category": "privesc"
+      }
+    },
+    "Post Exploitation": {
+      "mimikatz": {
+        "desc": "Windows credential extractor",
+        "install": "Download from github.com/gentilkiwi/mimikatz",
+        "usage": "mimikatz.exe",
+        "category": "postex"
+      },
+      "laZagne": {
+        "desc": "Password recovery tool",
+        "install": "pip install laZagne",
+        "usage": "laZagne.py all",
+        "category": "postex"
+      },
+      "pwdump": {
+        "desc": "Windows password dumper",
+        "install": "Download from foo.com/pwdump",
+        "usage": "pwdump.exe",
+        "category": "postex"
+      },
+      "fgdump": {
+        "desc": "Password cache dumper",
+        "install": "apt install fgdump",
+        "usage": "fgdump.exe",
+        "category": "postex"
+      }
+    },
+    "DNS Tools": {
+      "dnsenum": {
+        "desc": "DNS enumeration",
+        "install": "apt install dnsenum",
+        "usage": "dnsenum target.com",
+        "category": "dns"
+      },
+      "dnsmap": {
+        "desc": "DNS mapping",
+        "install": "apt install dnsmap",
+        "usage": "dnsmap target.com",
+        "category": "dns"
+      },
+      "fierce": {
+        "desc": "DNS scanner",
+        "install": "pip install fierce",
+        "usage": "fierce --domain target.com",
+        "category": "dns"
+      },
+      "dnschef": {
+        "desc": "DNS proxy",
+        "install": "pip install dnschef",
+        "usage": "dnschef.py",
+        "category": "dns"
+      },
+      "dnstwist": {
+        "desc": "Domain permutation",
+        "install": "pip install dnstwist",
+        "usage": "dnstwist example.com",
+        "category": "dns"
+      }
+    },
+    "SSL/TLS Analysis": {
+      "sslscan": {
+        "desc": "SSL/TLS scanner",
+        "install": "apt install sslscan / brew install sslscan",
+        "usage": "sslscan target.com",
+        "category": "ssl"
+      },
+      "testssl": {
+        "desc": "TLS testing tool",
+        "install": "git clone https://github.com/drwetter/testssl.sh",
+        "usage": "./testssl.sh target.com",
+        "category": "ssl"
+      },
+      "sslsplit": {
+        "desc": "SSL/TLS splitting proxy",
+        "install": "apt install sslsplit",
+        "usage": "sslsplit -D -k key.pem -c cert.pem",
+        "category": "ssl"
+      },
+      "openssl": {
+        "desc": "SSL/TLS toolkit",
+        "install": "apt install openssl",
+        "usage": "openssl s_client -connect target.com:443",
+        "category": "ssl"
+      }
+    }
+  },
+  "last_updated": "2026-02-23T11:09:54.052253",
+  "scan_results": {
+    "available": [
+      {
+        "name": "objdump",
+        "desc": "Disassembler (part of binutils)",
+        "category": "Reverse Engineering",
+        "installed": true
+      },
+      {
+        "name": "tcpdump",
+        "desc": "Command-line packet analyzer",
+        "category": "Sniffing & Spoofing",
+        "installed": true
+      },
+      {
+        "name": "openssl",
+        "desc": "SSL/TLS toolkit",
+        "category": "SSL/TLS Analysis",
+        "installed": true
+      }
+    ],
+    "unavailable": [
+      {
+        "name": "nmap",
+        "desc": "Network scanner - discovers hosts/services",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "masscan",
+        "desc": "Fast TCP port scanner",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "netdiscover",
+        "desc": "ARP-based network discovery",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "theHarvester",
+        "desc": "Email/subdomain harvester",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "subfinder",
+        "desc": "Passive subdomain enumeration",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "amass",
+        "desc": "Network mapping of attack surfaces",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "knock",
+        "desc": "Port knock scanner",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "zenmap",
+        "desc": "Nmap GUI",
+        "category": "Information Gathering",
+        "installed": false
+      },
+      {
+        "name": "nikto",
+        "desc": "Web server vulnerability scanner",
+        "category": "Vulnerability Analysis",
+        "installed": false
+      },
+      {
+        "name": "nuclei",
+        "desc": "Template-based vulnerability scanner",
+        "category": "Vulnerability Analysis",
+        "installed": false
+      },
+      {
+        "name": "openvas",
+        "desc": "Full vulnerability scanner",
+        "category": "Vulnerability Analysis",
+        "installed": false
+      },
+      {
+        "name": "metasploit",
+        "desc": "Exploitation framework",
+        "category": "Exploitation",
+        "installed": false
+      },
+      {
+        "name": "sqlmap",
+        "desc": "SQL injection automation",
+        "category": "Exploitation",
+        "installed": false
+      },
+      {
+        "name": "searchsploit",
+        "desc": "Exploit-DB search tool",
+        "category": "Exploitation",
+        "installed": false
+      },
+      {
+        "name": "hydra",
+        "desc": "Password brute-forcing tool",
+        "category": "Exploitation",
+        "installed": false
+      },
+      {
+        "name": "aircrack-ng",
+        "desc": "WiFi security auditing",
+        "category": "Wireless",
+        "installed": false
+      },
+      {
+        "name": "wifite",
+        "desc": "Automated wireless auditor",
+        "category": "Wireless",
+        "installed": false
+      },
+      {
+        "name": "hashcat",
+        "desc": "Fast password recovery",
+        "category": "Password Attacks",
+        "installed": false
+      },
+      {
+        "name": "john",
+        "desc": "John the Ripper",
+        "category": "Password Attacks",
+        "installed": false
+      },
+      {
+        "name": "cewl",
+        "desc": "Custom wordlist generator",
+        "category": "Password Attacks",
+        "installed": false
+      },
+      {
+        "name": "burpsuite",
+        "desc": "Web application security testing",
+        "category": "Web Applications",
+        "installed": false
+      },
+      {
+        "name": "zap",
+        "desc": "OWASP ZAP proxy",
+        "category": "Web Applications",
+        "installed": false
+      },
+      {
+        "name": "gobuster",
+        "desc": "Directory/Subdomain fuzzing",
+        "category": "Web Applications",
+        "installed": false
+      },
+      {
+        "name": "dirb",
+        "desc": "Web content scanner",
+        "category": "Web Applications",
+        "installed": false
+      },
+      {
+        "name": "ghidra",
+        "desc": "Software reverse engineering",
+        "category": "Reverse Engineering",
+        "installed": false
+      },
+      {
+        "name": "radare2",
+        "desc": "Command-line reverse engineering",
+        "category": "Reverse Engineering",
+        "installed": false
+      },
+      {
+        "name": "autopsy",
+        "desc": "Digital forensics platform",
+        "category": "Forensics",
+        "installed": false
+      },
+      {
+        "name": "volatility",
+        "desc": "Memory forensics framework",
+        "category": "Forensics",
+        "installed": false
+      },
+      {
+        "name": "binwalk",
+        "desc": "Binary analysis tool",
+        "category": "Forensics",
+        "installed": false
+      },
+      {
+        "name": "burp-suite",
+        "desc": "Web proxy for testing LLM apps",
+        "category": "LLM Security",
+        "installed": false
+      },
+      {
+        "name": "payloads",
+        "desc": "LLM jailbreak payloads collection",
+        "category": "LLM Security",
+        "installed": false
+      },
+      {
+        "name": "awscli",
+        "desc": "AWS command line interface",
+        "category": "Cloud Security",
+        "installed": false
+      },
+      {
+        "name": "azure-cli",
+        "desc": "Microsoft Azure CLI",
+        "category": "Cloud Security",
+        "installed": false
+      },
+      {
+        "name": "gcloud",
+        "desc": "Google Cloud CLI",
+        "category": "Cloud Security",
+        "installed": false
+      },
+      {
+        "name": "cloudmapper",
+        "desc": "AWS security visualization",
+        "category": "Cloud Security",
+        "installed": false
+      },
+      {
+        "name": "prowler",
+        "desc": "AWS security assessment",
+        "category": "Cloud Security",
+        "installed": false
+      },
+      {
+        "name": "cloudfrunt",
+        "desc": "Find domain variants for cloud services",
+        "category": "Cloud Security",
+        "installed": false
+      },
+      {
+        "name": "adb",
+        "desc": "Android Debug Bridge",
+        "category": "Mobile Security",
+        "installed": false
+      },
+      {
+        "name": "apktool",
+        "desc": "Android APK decompiler",
+        "category": "Mobile Security",
+        "installed": false
+      },
+      {
+        "name": "jadx",
+        "desc": "Dex to Java decompiler",
+        "category": "Mobile Security",
+        "installed": false
+      },
+      {
+        "name": "drozer",
+        "desc": "Android security assessment",
+        "category": "Mobile Security",
+        "installed": false
+      },
+      {
+        "name": "frida",
+        "desc": "Dynamic instrumentation toolkit",
+        "category": "Mobile Security",
+        "installed": false
+      },
+      {
+        "name": "Postman",
+        "desc": "API testing platform",
+        "category": "API Security",
+        "installed": false
+      },
+      {
+        "name": "insomnia",
+        "desc": "API design platform",
+        "category": "API Security",
+        "installed": false
+      },
+      {
+        "name": "swagger",
+        "desc": "API documentation tool",
+        "category": "API Security",
+        "installed": false
+      },
+      {
+        "name": "restler",
+        "desc": "REST API fuzzer",
+        "category": "API Security",
+        "installed": false
+      },
+      {
+        "name": "setoolkit",
+        "desc": "Social-Engineer Toolkit",
+        "category": "Social Engineering",
+        "installed": false
+      },
+      {
+        "name": "king-phisher",
+        "desc": "Phishing campaign tool",
+        "category": "Social Engineering",
+        "installed": false
+      },
+      {
+        "name": "gophish",
+        "desc": "Open-source phishing framework",
+        "category": "Social Engineering",
+        "installed": false
+      },
+      {
+        "name": "evilginx2",
+        "desc": "Man-in-the-middle proxy",
+        "category": "Social Engineering",
+        "installed": false
+      },
+      {
+        "name": "wireshark",
+        "desc": "Network protocol analyzer",
+        "category": "Sniffing & Spoofing",
+        "installed": false
+      },
+      {
+        "name": "ettercap",
+        "desc": "Man-in-the-middle tool",
+        "category": "Sniffing & Spoofing",
+        "installed": false
+      },
+      {
+        "name": "bettercap",
+        "desc": "Swiss army knife for network",
+        "category": "Sniffing & Spoofing",
+        "installed": false
+      },
+      {
+        "name": "dsniff",
+        "desc": "Network sniffing tools",
+        "category": "Sniffing & Spoofing",
+        "installed": false
+      },
+      {
+        "name": "linpeas",
+        "desc": "Linux privilege escalation checker",
+        "category": "Privilege Escalation",
+        "installed": false
+      },
+      {
+        "name": "linenum",
+        "desc": "Linux local enumeration",
+        "category": "Privilege Escalation",
+        "installed": false
+      },
+      {
+        "name": "linux-exploit-suggester",
+        "desc": "Find Linux exploits",
+        "category": "Privilege Escalation",
+        "installed": false
+      },
+      {
+        "name": "winpeas",
+        "desc": "Windows privilege escalation",
+        "category": "Privilege Escalation",
+        "installed": false
+      },
+      {
+        "name": "powerup",
+        "desc": "Windows privilege escalation",
+        "category": "Privilege Escalation",
+        "installed": false
+      },
+      {
+        "name": "mimikatz",
+        "desc": "Windows credential extractor",
+        "category": "Post Exploitation",
+        "installed": false
+      },
+      {
+        "name": "laZagne",
+        "desc": "Password recovery tool",
+        "category": "Post Exploitation",
+        "installed": false
+      },
+      {
+        "name": "pwdump",
+        "desc": "Windows password dumper",
+        "category": "Post Exploitation",
+        "installed": false
+      },
+      {
+        "name": "fgdump",
+        "desc": "Password cache dumper",
+        "category": "Post Exploitation",
+        "installed": false
+      },
+      {
+        "name": "dnsenum",
+        "desc": "DNS enumeration",
+        "category": "DNS Tools",
+        "installed": false
+      },
+      {
+        "name": "dnsmap",
+        "desc": "DNS mapping",
+        "category": "DNS Tools",
+        "installed": false
+      },
+      {
+        "name": "fierce",
+        "desc": "DNS scanner",
+        "category": "DNS Tools",
+        "installed": false
+      },
+      {
+        "name": "dnschef",
+        "desc": "DNS proxy",
+        "category": "DNS Tools",
+        "installed": false
+      },
+      {
+        "name": "dnstwist",
+        "desc": "Domain permutation",
+        "category": "DNS Tools",
+        "installed": false
+      },
+      {
+        "name": "sslscan",
+        "desc": "SSL/TLS scanner",
+        "category": "SSL/TLS Analysis",
+        "installed": false
+      },
+      {
+        "name": "testssl",
+        "desc": "TLS testing tool",
+        "category": "SSL/TLS Analysis",
+        "installed": false
+      },
+      {
+        "name": "sslsplit",
+        "desc": "SSL/TLS splitting proxy",
+        "category": "SSL/TLS Analysis",
+        "installed": false
+      }
+    ],
+    "total_available": 3,
+    "total_tools": 74
+  }
+}
