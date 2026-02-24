@@ -5,6 +5,45 @@
 
 ---
 
+## [2026-02-24 14:55] - Add Trading Signal Tracker Module
+**Task ID / PR Reference:** N/A
+
+### 1. Core Changes
+* **Added:** `skills/trading/data/signal_tracker.py` - Track predictions & outcomes
+* **Added:** `skills/trading/data/signal_scanner.py` - Scan X/Twitter for signals
+* **Added:** `skills/trading/data/analysts.py` - Trading analysts database
+* **Added:** Cron job `trading-signal-scan` - Every 30 min
+
+### 2. How It Works
+1. **Tracks accounts** - Add traders to track
+2. **Records predictions** - Stores predictions BEFORE market moves
+3. **Checks outcomes** - Compares predictions to actual results
+4. **Calculates accuracy** - Win rate for each account
+5. **Generates insights** - AI分析 what's next
+
+### 3. Database Schema
+- predictions: trading signals with outcomes
+- tracked_accounts: accounts being monitored
+- market_data: price data for comparison
+- analysis: insights generated
+
+### 4. Usage
+```bash
+# Initialize
+python3 -m skills.trading.data.signal_tracker --init
+
+# Add account
+python3 -m skills.trading.data.signal_tracker --add-account @CryptoCred Credible crypto
+
+# Top performers
+python3 -m skills.trading.data.signal_tracker --top
+
+# Generate insights
+python3 -m skills.trading.data.signal_scanner --insights
+```
+
+---
+
 ## [2026-02-23 04:48] - Add More Microservices (WiFi, Forensics, Reporting)
 **Task ID / PR Reference:** N/A
 
